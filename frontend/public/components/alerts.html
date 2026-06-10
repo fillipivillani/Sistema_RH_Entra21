@@ -1,0 +1,64 @@
+<!-- alerts.html -->
+<!-- Componente: Alertas e Notificações do Sistema -->
+
+<!-- Alert de Sucesso -->
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>✅ Sucesso!</strong> Operação realizada com sucesso.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+<!-- Alert de Erro -->
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <strong>❌ Erro!</strong> Ocorreu um erro ao processar a solicitação.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+<!-- Alert de Aviso -->
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+    <strong>⚠️ Aviso!</strong> Verifique os dados antes de continuar.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+<!-- Alert de Informação -->
+<div class="alert alert-info alert-dismissible fade show" role="alert">
+    <strong>ℹ️ Informação:</strong> Nova versão disponível.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+<!-- Toast/Notificação (Canto superior direito) -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="notificationToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header bg-success text-white">
+            <strong class="me-auto">✅ Notificação</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            Ação realizada com sucesso!
+        </div>
+    </div>
+</div>
+
+<script>
+    // Função para mostrar notificações
+    function showNotification(message, type = 'success') {
+        const toast = document.getElementById('notificationToast');
+        const toastHeader = toast.querySelector('.toast-header');
+        
+        // Mudar cor baseada no tipo
+        const colors = {
+            'success': 'bg-success',
+            'error': 'bg-danger',
+            'warning': 'bg-warning',
+            'info': 'bg-info'
+        };
+        
+        toastHeader.className = `toast-header ${colors[type]} text-white`;
+        toast.querySelector('.toast-body').textContent = message;
+        
+        const bsToast = new bootstrap.Toast(toast);
+        bsToast.show();
+    }
+
+    // Exemplo de uso:
+    // showNotification('Operação realizada com sucesso!', 'success');
+</script>

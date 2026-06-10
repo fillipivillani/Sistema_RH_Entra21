@@ -1,0 +1,148 @@
+<!-- forms.html -->
+<!-- Componente: Formulários e Inputs Reutilizáveis -->
+
+<!-- Input Padrão -->
+<div class="mb-3">
+    <label class="form-label">Nome</label>
+    <input type="text" class="form-control" placeholder="Digite seu nome">
+</div>
+
+<!-- Input com Ícone -->
+<div class="mb-3">
+    <label class="form-label">Email</label>
+    <div class="input-group">
+        <span class="input-group-text">📧</span>
+        <input type="email" class="form-control" placeholder="seu@email.com">
+    </div>
+</div>
+
+<!-- Select/Dropdown -->
+<div class="mb-3">
+    <label class="form-label">Departamento</label>
+    <select class="form-select">
+        <option selected>Selecione um departamento</option>
+        <option value="ti">TI</option>
+        <option value="rh">RH</option>
+        <option value="financeiro">Financeiro</option>
+        <option value="vendas">Vendas</option>
+    </select>
+</div>
+
+<!-- Textarea -->
+<div class="mb-3">
+    <label class="form-label">Observações</label>
+    <textarea class="form-control" rows="4" placeholder="Digite aqui..."></textarea>
+</div>
+
+<!-- Checkbox -->
+<div class="mb-3">
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="checkboxExample">
+        <label class="form-check-label" for="checkboxExample">
+            Concordo com os termos e condições
+        </label>
+    </div>
+</div>
+
+<!-- Radio Button -->
+<div class="mb-3">
+    <label class="form-label">Status</label>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" name="status" id="statusAtivo" value="ativo">
+        <label class="form-check-label" for="statusAtivo">
+            Ativo
+        </label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" name="status" id="statusInativo" value="inativo">
+        <label class="form-check-label" for="statusInativo">
+            Inativo
+        </label>
+    </div>
+</div>
+
+<!-- Input com Validação -->
+<div class="mb-3">
+    <label class="form-label">Telefone</label>
+    <input type="tel" class="form-control is-valid" placeholder="(11) 99999-9999">
+    <div class="valid-feedback">
+        ✅ Telefone válido!
+    </div>
+</div>
+
+<!-- Input com Erro -->
+<div class="mb-3">
+    <label class="form-label">CPF</label>
+    <input type="text" class="form-control is-invalid" placeholder="000.000.000-00">
+    <div class="invalid-feedback">
+        ❌ CPF inválido!
+    </div>
+</div>
+
+<!-- Input com Help Text -->
+<div class="mb-3">
+    <label class="form-label">Salário</label>
+    <input type="number" class="form-control" placeholder="0.00">
+    <small class="form-text text-muted">Formato: R$ 0.00</small>
+</div>
+
+<!-- Formulário Completo -->
+<form class="card p-4">
+    <h5 class="mb-4">Formulário de Cadastro</h5>
+    
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Nome Completo *</label>
+            <input type="text" class="form-control" required>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Email *</label>
+            <input type="email" class="form-control" required>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Telefone</label>
+            <input type="tel" class="form-control">
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Cargo *</label>
+            <input type="text" class="form-control" required>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Departamento *</label>
+            <select class="form-select" required>
+                <option value="">Selecione...</option>
+                <option value="ti">TI</option>
+                <option value="rh">RH</option>
+            </select>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Data de Contratação *</label>
+            <input type="date" class="form-control" required>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Observações</label>
+        <textarea class="form-control" rows="3"></textarea>
+    </div>
+
+    <div class="mb-3">
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="confirmCheckbox" required>
+            <label class="form-check-label" for="confirmCheckbox">
+                Confirmo que os dados estão corretos
+            </label>
+        </div>
+    </div>
+
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+        <button type="button" class="btn btn-secondary">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Salvar</button>
+    </div>
+</form>

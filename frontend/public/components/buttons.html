@@ -1,0 +1,97 @@
+<!-- buttons.html -->
+<!-- Componente: Botões e Ações Reutilizáveis -->
+
+<!-- Botões Padrão -->
+<button class="btn btn-primary">Primário</button>
+<button class="btn btn-secondary">Secundário</button>
+<button class="btn btn-success">Sucesso</button>
+<button class="btn btn-danger">Perigo</button>
+<button class="btn btn-warning">Aviso</button>
+<button class="btn btn-info">Informação</button>
+
+<!-- Botões Outline -->
+<button class="btn btn-outline-primary">Outline Primário</button>
+<button class="btn btn-outline-secondary">Outline Secundário</button>
+<button class="btn btn-outline-success">Outline Sucesso</button>
+<button class="btn btn-outline-danger">Outline Perigo</button>
+
+<!-- Tamanhos de Botões -->
+<button class="btn btn-lg btn-primary">Grande</button>
+<button class="btn btn-primary">Normal</button>
+<button class="btn btn-sm btn-primary">Pequeno</button>
+
+<!-- Botões com Ícones -->
+<button class="btn btn-primary">
+    ➕ Adicionar
+</button>
+<button class="btn btn-outline-primary">
+    ✏️ Editar
+</button>
+<button class="btn btn-outline-danger">
+    🗑️ Deletar
+</button>
+<button class="btn btn-info">
+    👁️ Visualizar
+</button>
+
+<!-- Botões em Grupo -->
+<div class="btn-group" role="group">
+    <button type="button" class="btn btn-outline-primary">Esquerda</button>
+    <button type="button" class="btn btn-outline-primary">Centro</button>
+    <button type="button" class="btn btn-outline-primary">Direita</button>
+</div>
+
+<!-- Botão Dropdown -->
+<div class="dropdown">
+    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownButton" data-bs-toggle="dropdown">
+        Ações
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="dropdownButton">
+        <li><a class="dropdown-item" href="#">Editar</a></li>
+        <li><a class="dropdown-item" href="#">Duplicar</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="#">Deletar</a></li>
+    </ul>
+</div>
+
+<!-- Botões com Estado Desabilitado -->
+<button class="btn btn-primary" disabled>Desabilitado</button>
+<button class="btn btn-success">Habilitado</button>
+
+<!-- Botões com Loading -->
+<button class="btn btn-primary" id="loadingBtn">
+    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" style="display: none;"></span>
+    Carregando...
+</button>
+
+<script>
+    // Exemplo de botão com loading
+    document.getElementById('loadingBtn').addEventListener('click', function() {
+        const spinner = this.querySelector('.spinner-border');
+        spinner.style.display = 'inline-block';
+        this.disabled = true;
+        
+        // Simular carregamento
+        setTimeout(() => {
+            spinner.style.display = 'none';
+            this.disabled = false;
+            this.textContent = '✅ Concluído!';
+        }, 2000);
+    });
+</script>
+
+<!-- Botões Full Width -->
+<button class="btn btn-primary w-100">Botão Largura Completa</button>
+
+<!-- Botões com Tooltip -->
+<button class="btn btn-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Dica de ajuda">
+    ❓ Com Tooltip
+</button>
+
+<script>
+    // Inicializar tooltips
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+</script>

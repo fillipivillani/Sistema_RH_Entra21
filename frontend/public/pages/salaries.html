@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salários - Sistema de RH</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body>
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-dark bg-dark sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <strong>👥 Sistema de RH</strong>
+            </a>
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown">
+                    👤 Usuário
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li><a class="dropdown-item" href="#">Perfil</a></li>
+                    <li><a class="dropdown-item" href="#">Configurações</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#">Sair</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div style="display: flex;">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="p-4">
+                <h5 class="mb-4">Menu</h5>
+                <nav class="nav flex-column">
+                    <a class="nav-link" href="../index.html">
+                        📊 Dashboard
+                    </a>
+                    <a class="nav-link" href="employees.html">
+                        👥 Funcionários
+                    </a>
+                    <a class="nav-link" href="departments.html">
+                        🏢 Departamentos
+                    </a>
+                    <a class="nav-link active" href="salaries.html">
+                        💰 Salários
+                    </a>
+                    <a class="nav-link" href="attendance.html">
+                        📅 Frequência
+                    </a>
+                    <a class="nav-link" href="reports.html">
+                        📈 Relatórios
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <div class="main-content" style="flex-grow: 1;">
+            <div class="container-fluid">
+                <!-- HEADER -->
+                <div class="row mb-4 align-items-center">
+                    <div class="col">
+                        <h1 class="h3">Salários e Folha de Pagamento</h1>
+                        <p class="text-muted">Gerenciar salários e folha de pagamento dos funcionários</p>
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSalaryModal">
+                            ➕ Processar Folha
+                        </button>
+                    </div>
+                </div>
+
+                <!-- FILTROS -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label">Período</label>
+                                <input type="month" class="form-control" id="periodFilter" value="2024-01">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Departamento</label>
+                                <select class="form-select">
+                                    <option value="">Todos</option>
+                                    <option value="TI">TI</option>
+                                    <option value="RH">RH</option>
+                                    <option value="Financeiro">Financeiro</option>
+                                    <option value="Vendas">Vendas</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Status</label>
+                                <select class="form-select">
+                                    <option value="">Todos</option>
+                                    <option value="Pendente">Pendente</option>
+                                    <option value="Processado">Processado</option>
+                                    <option value="Pago">Pago</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ESTATÍSTICAS -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card text-center p-4">
+                            <div class="h5 text-primary">R$ 156.800,00</div>
+                            <p class="text-muted mb-0">Total de Salários</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center p-4">
+                            <div class="h5 text-success">R$ 18.500,00</div>
+                            <p class="text-muted mb-0">Descontos</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center p-4">
+                            <div class="h5 text-warning">R$ 5.200,00</div>
+                            <p class="text-muted mb-0">Bônus</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center p-4">
+                            <div class="h5 text-info">R$ 143.500,00</div>
+                            <p class="text-muted mb-0">Líquido</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TABELA -->
+                <div class="card">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Funcionário</th>
+                                    <th>Cargo</th>
+                                    <th>Período</th>
+                                    <th>Salário Base</th>
+                                    <th>Descontos</th>
+                                    <th>Bônus</th>
+                                    <th>Salário Líquido</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>João Silva</strong></td>
+                                    <td>Desenvolvedor</td>
+                                    <td>Jan/2024</td>
+                                    <td>R$ 5.500,00</td>
+                                    <td>R$ 550,00</td>
+                                    <td>R$ 500,00</td>
+                                    <td><strong>R$ 5.450,00</strong></td>
+                                    <td><span class="badge bg-success">Pago</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">👁️</button>
+                                        <button class="btn btn-sm btn-outline-danger">🗑️</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Maria Santos</strong></td>
+                                    <td>Gerente RH</td>
+                                    <td>Jan/2024</td>
+                                    <td>R$ 6.200,00</td>
+                                    <td>R$ 620,00</td>
+                                    <td>R$ 800,00</td>
+                                    <td><strong>R$ 6.380,00</strong></td>
+                                    <td><span class="badge bg-success">Pago</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">👁️</button>
+                                        <button class="btn btn-sm btn-outline-danger">🗑️</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Carlos Oliveira</strong></td>
+                                    <td>Analista Financeiro</td>
+                                    <td>Jan/2024</td>
+                                    <td>R$ 4.800,00</td>
+                                    <td>R$ 480,00</td>
+                                    <td>R$ 300,00</td>
+                                    <td><strong>R$ 4.620,00</strong></td>
+                                    <td><span class="badge bg-warning">Pendente</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">👁️</button>
+                                        <button class="btn btn-sm btn-outline-danger">🗑️</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Ana Costa</strong></td>
+                                    <td>Vendedora</td>
+                                    <td>Jan/2024</td>
+                                    <td>R$ 4.200,00</td>
+                                    <td>R$ 420,00</td>
+                                    <td>R$ 1.200,00</td>
+                                    <td><strong>R$ 4.980,00</strong></td>
+                                    <td><span class="badge bg-success">Pago</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">👁️</button>
+                                        <button class="btn btn-sm btn-outline-danger">🗑️</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Processar Folha -->
+    <div class="modal fade" id="addSalaryModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Processar Folha de Pagamento</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="salaryForm">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Período *</label>
+                            <input type="month" class="form-control" id="salaryPeriod" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Funcionário *</label>
+                            <select class="form-select" id="salaryEmployee" required>
+                                <option value="">Selecione...</option>
+                                <option value="1">João Silva</option>
+                                <option value="2">Maria Santos</option>
+                                <option value="3">Carlos Oliveira</option>
+                                <option value="4">Ana Costa</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Salário Base *</label>
+                            <input type="number" class="form-control" id="baseSalary" step="0.01" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Descontos</label>
+                            <input type="number" class="form-control" id="discounts" step="0.01" value="0">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Bônus</label>
+                            <input type="number" class="form-control" id="bonus" step="0.01" value="0">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Processar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-dark text-white text-center py-4 mt-5">
+        <p class="mb-0">&copy; 2024 Sistema de RH. Desenvolvido com ❤️</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const salaryForm = document.getElementById('salaryForm');
+        const salaryModal = new bootstrap.Modal(document.getElementById('addSalaryModal'));
+
+        salaryForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('✅ Folha de pagamento processada com sucesso!');
+            salaryModal.hide();
+            salaryForm.reset();
+        });
+    </script>
+</body>
+</html>

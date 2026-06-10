@@ -1,0 +1,212 @@
+<!-- tables.html -->
+<!-- Componente: Tabelas Reutilizáveis -->
+
+<!-- Tabela Padrão -->
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Cargo</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>João Silva</td>
+            <td>joao@email.com</td>
+            <td>Desenvolvedor</td>
+            <td><span class="badge bg-success">Ativo</span></td>
+        </tr>
+        <tr>
+            <td>Maria Santos</td>
+            <td>maria@email.com</td>
+            <td>Gerente</td>
+            <td><span class="badge bg-success">Ativo</span></td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Tabela com Hover -->
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Departamento</th>
+            <th>Funcionários</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>TI</td>
+            <td>12</td>
+            <td>
+                <button class="btn btn-sm btn-outline-primary">✏️</button>
+                <button class="btn btn-sm btn-outline-danger">🗑️</button>
+            </td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>RH</td>
+            <td>8</td>
+            <td>
+                <button class="btn btn-sm btn-outline-primary">✏️</button>
+                <button class="btn btn-sm btn-outline-danger">🗑️</button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Tabela Striped (Listrada) -->
+<table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Funcionário</th>
+            <th>Período</th>
+            <th>Salário</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>João Silva</strong></td>
+            <td>Jan/2024</td>
+            <td>R$ 5.500,00</td>
+            <td><span class="badge bg-success">Pago</span></td>
+        </tr>
+        <tr>
+            <td><strong>Maria Santos</strong></td>
+            <td>Jan/2024</td>
+            <td>R$ 6.200,00</td>
+            <td><span class="badge bg-warning">Pendente</span></td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Tabela Bordered -->
+<table class="table table-bordered table-hover">
+    <thead class="table-light">
+        <tr>
+            <th>Data</th>
+            <th>Funcionário</th>
+            <th>Entrada</th>
+            <th>Saída</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>15/01/2024</td>
+            <td>João Silva</td>
+            <td>08:00</td>
+            <td>17:30</td>
+            <td><span class="badge bg-success">Presente</span></td>
+        </tr>
+        <tr>
+            <td>15/01/2024</td>
+            <td>Maria Santos</td>
+            <td>08:15</td>
+            <td>18:00</td>
+            <td><span class="badge bg-success">Presente</span></td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Tabela Responsiva (scroll em telas pequenas) -->
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Telefone</th>
+                <th>Cargo</th>
+                <th>Departamento</th>
+                <th>Data Contratação</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>João Silva</strong></td>
+                <td>joao@email.com</td>
+                <td>(11) 99999-9999</td>
+                <td>Desenvolvedor</td>
+                <td>TI</td>
+                <td>15/02/2022</td>
+                <td><span class="badge bg-success">Ativo</span></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Tabela com Cores de Linha -->
+<table class="table table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>Item</th>
+            <th>Valor</th>
+            <th>Percentual</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="table-success">
+            <td>Salários</td>
+            <td>R$ 156.800,00</td>
+            <td>75%</td>
+        </tr>
+        <tr class="table-warning">
+            <td>Bônus</td>
+            <td>R$ 18.500,00</td>
+            <td>9%</td>
+        </tr>
+        <tr class="table-danger">
+            <td>Multas</td>
+            <td>R$ 5.200,00</td>
+            <td>2.5%</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Tabela com Ações Inline -->
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="selectAll">
+                </div>
+            </th>
+            <th>Nome</th>
+            <th>Cargo</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox">
+                </div>
+            </td>
+            <td>João Silva</td>
+            <td>Desenvolvedor</td>
+            <td>
+                <button class="btn btn-sm btn-outline-primary">✏️ Editar</button>
+                <button class="btn btn-sm btn-outline-danger">🗑️ Deletar</button>
+                <div class="dropdown d-inline">
+                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        ⋯
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#">Duplicar</a></li>
+                        <li><a class="dropdown-item" href="#">Ativar</a></li>
+                        <li><a class="dropdown-item" href="#">Desativar</a></li>
+                    </ul>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>
