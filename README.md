@@ -21,7 +21,7 @@ Criar um sistema integrado para gerenciar funcionários, departamentos, folhas d
 - **HTML5**
 - **CSS3**
 - **Bootstrap 5**
-- **JavaScript (Vanilla)**
+- **JavaScript**
 
 ### Ferramentas
 - **Maven** (gerenciamento de dependências)
@@ -74,8 +74,8 @@ projeto-rh/
 
 ### 1. Clonar o Repositório
 ```bash
-git clone https://github.com/seu-usuario/projeto-rh.git
-cd projeto-rh
+git clone https://github.com/seu-usuario/Sistema_RH_Entra21.git
+cd Sistema_RH_Entra21
 ```
 
 ### 2. Configurar o Banco de Dados
@@ -114,19 +114,6 @@ A aplicação estará disponível em: `http://localhost:8080/api`
 ### 5. Frontend
 Abra `public/index.html` no navegador ou sirva os arquivos estáticos através do backend.
 
-## 📚 Documentação
-
-- [API Endpoints](docs/API_ENDPOINTS.md)
-- [Schema do Banco de Dados](docs/DATABASE_SCHEMA.md)
-- [Guia de Setup Detalhado](docs/GUIA_SETUP.md)
-
-## 🧪 Testes
-
-### Testes Unitários
-```bash
-mvn test
-```
-
 ### Testes com Postman
 Importe a coleção em `.postman/collections.json` no Postman e execute os testes.
 
@@ -139,40 +126,11 @@ Importe a coleção em `.postman/collections.json` no Postman e execute os teste
 5. **Push**: `git push origin feature/sua-feature`
 6. **Pull Request**: Criar PR para branch `main`
 
-## 🔐 Segurança
-
-- [ ] Implementar Spring Security
-- [ ] Adicionar autenticação JWT
-- [ ] Validar entrada de dados (Bean Validation)
-- [ ] Proteção contra CSRF
-- [ ] Rate limiting
-
-## 🐛 Solução de Problemas
-
-### Erro de conexão com PostgreSQL
-```
-Verifique se o PostgreSQL está rodando na porta 5432
-docker-compose logs postgres
-```
-
-### Erro de migração Flyway
-```
-Delete a tabela 'flyway_schema_history' e reinicie
-```
-
-### Porta 8080 já em uso
-```bash
-mvn spring-boot:run -Dspring-boot.run.arguments="--server.port=8081"
-```
-
-## 📝 Licença
-
-Este projeto está licenciado sob a licença MIT.
-
 ## 👥 Contribuidores
 
-Seu nome aqui!
+Fillipi Villani
+Eduardo Domingues
+Yuri
+Tiago
+Argel
 
----
-
-**Desenvolvido com ❤️ para melhorar a gestão de RH**
