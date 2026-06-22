@@ -1,0 +1,4 @@
+body { background-color: #f8fafc; }
+.main-card { max-width: 900px; margin: 36px auto; }
+.card-title { font-weight: 700; }
+.message-box { margin-top: 18px; }
