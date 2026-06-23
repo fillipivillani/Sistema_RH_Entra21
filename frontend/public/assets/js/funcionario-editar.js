@@ -1,16 +1,15 @@
-// Yuri exemplo de departamentos e cargos (poderiam vir do backend)
+// Reuse same deps/cargos from cadastro
 const _deps = ['RH','TI','Marketing','Financeiro'];
 const _cargos = ['Analista','Desenvolvedor','Designer','Gerente'];
 
-function populateSelectsCadastro(){
+function populateSelectsEditar(){
   const dep = document.getElementById('dep');
   const cargo = document.getElementById('cargo');
   _deps.forEach(d=>{ const o=document.createElement('option'); o.value=d; o.textContent=d; dep.appendChild(o); });
   _cargos.forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent=c; cargo.appendChild(o); });
 }
 
-// preview da imagem selecionada
-function handlePhotoInput(){
+function handlePhotoInputEditar(){
   const input = document.getElementById('photo');
   const preview = document.getElementById('photo-preview');
   input.addEventListener('change', ()=>{
@@ -22,7 +21,6 @@ function handlePhotoInput(){
   });
 }
 
-// ====== Mascaras de validação ======
 function onlyDigits(str){ return (str||'').toString().replace(/\D+/g,''); }
 
 function maskCPFField(el){
@@ -39,7 +37,6 @@ function maskCPFField(el){
 function maskRGField(el){
   el.addEventListener('input', ()=>{
     let v = onlyDigits(el.value).slice(0,12);
-    // mascarar RG no formato XX.XXX.XXX-X (varia muito, mas é um formato comum)
     if(v.length <= 2){ el.value = v; return; }
     v = v.replace(/(\d{2})(\d)/, "$1.$2");
     v = v.replace(/(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
@@ -68,7 +65,6 @@ function maskPhoneField(el){
 function isValidCPF(cpf){
   cpf = onlyDigits(cpf);
   if(!cpf || cpf.length !== 11) return false;
-  // invalido conhecido: todos os dígitos iguais (ex: 111.111.111-11)
   if(/^([0-9])\1{10}$/.test(cpf)) return false;
   const calc = (t)=>{
     let sum = 0, i;
@@ -98,29 +94,30 @@ function validateEmail(email){
   return re.test(email);
 }
 
+function prefillFromLocalStorage(){
+  try{
+    const raw = localStorage.getItem('editingFuncionario');
+    if(!raw) return null;
+    return JSON.parse(raw);
+  }catch(e){ return null; }
+}
 
-function wireForm(){
-  const form = document.getElementById('form-cadastro');
+function wireEditarForm(){
+  const form = document.getElementById('form-editar');
   form.addEventListener('submit', (e)=>{
     e.preventDefault();
-    // coleta de dados básicos
-    // validações
     const cpfEl = document.getElementById('cpf');
     const rgEl = document.getElementById('rg');
     const telEl = document.getElementById('telefone');
     const emailEl = document.getElementById('email');
     let valid = true;
-    // CPF obrigatório e válido
     if(!isValidCPF(cpfEl.value)){
       setInvalid(cpfEl, 'CPF inválido. Informe 11 dígitos.'); valid = false;
     }
-    // RG se preenchido verificar apenas dígitos mínimos
     if(rgEl.value && onlyDigits(rgEl.value).length < 6){ setInvalid(rgEl, 'RG muito curto.'); valid = false; }
-    // telefone: ao menos 10 dígitos
     if(telEl.value && onlyDigits(telEl.value).length < 10){ setInvalid(telEl, 'Telefone inválido.'); valid = false; }
-    // email formato
     if(emailEl.value && !validateEmail(emailEl.value)){ setInvalid(emailEl, 'E-mail inválido.'); valid = false; }
-    if(!valid){ return; }
+    if(!valid) return;
     const data = {
       nome: document.getElementById('nome').value,
       cpf: document.getElementById('cpf').value,
@@ -144,43 +141,79 @@ function wireForm(){
       salario: document.getElementById('salario').value,
       status: document.getElementById('status').value
     };
-    // attach photo preview (if any)
-    const photoSrc = document.getElementById('photo-preview').src;
-    data.foto = photoSrc && photoSrc.indexOf('avatar-placeholder') === -1 ? photoSrc : '';
-
-    // persist to localStorage (append)
+    // include id from the editingFuncionario stored earlier
+    try{
+      const rawEditing = localStorage.getItem('editingFuncionario');
+      if(rawEditing){
+        const parsed = JSON.parse(rawEditing);
+        if(parsed && parsed.id) data.id = parsed.id;
+      }
+    }catch(e){}
+    // attach current photo preview (if not placeholder)
+    try{
+      const photoSrc = document.getElementById('photo-preview').src;
+      if(photoSrc && photoSrc.indexOf('avatar-placeholder') === -1) data.foto = photoSrc; else data.foto = '';
+    }catch(e){}
+    console.log('Salvar edição (simulado):', data);
+    alert('Alterações salvas (simulado).');
+    // persist changes into stored funcionarios list (by id if present)
     try{
       const STORAGE_KEY = 'funcionariosData';
       const raw = localStorage.getItem(STORAGE_KEY);
       let list = raw ? JSON.parse(raw) : [];
-      // generate id
-      const nextId = list.length ? Math.max(...list.map(x=>x.id))+1 : 1;
-      data.id = nextId;
-      list.push(data);
+      if(data && data.id){
+        const idx = list.findIndex(x=>x.id===data.id);
+        if(idx >= 0){ list[idx] = Object.assign({}, list[idx], data); }
+        else { list.push(Object.assign({id:data.id}, data)); }
+      }
       localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-      console.log('Salvar (simulado):', data);
-      alert('Funcionário salvo (simulado) e adicionado à lista.');
-      // redirect to list
-      window.location.href = 'funcionarios.html';
-    }catch(e){
-      console.error('Erro ao salvar localmente', e);
-      alert('Erro ao salvar localmente. Veja console.');
-    }
+    }catch(e){ console.warn('Erro ao persistir edição', e); }
+    // cleanup
+    try{ localStorage.removeItem('editingFuncionario'); }catch(e){}
+    // navigate back to list
+    window.location.href = 'funcionarios.html';
   });
 
   document.getElementById('btn-cancel').addEventListener('click', ()=>{
-    if(confirm('Cancelar cadastro e limpar o formulário?')){
-      form.reset();
-  document.getElementById('photo-preview').src='../assets/images/avatar-placeholder.png';
+    if(confirm('Cancelar edição e voltar para a lista?')){
+      window.location.href = 'funcionarios.html';
     }
   });
 }
 
-document.addEventListener('DOMContentLoaded', function(){
-  populateSelectsCadastro();
-  handlePhotoInput();
+function prefillValues(obj){
+  if(!obj) return;
+  document.getElementById('nome').value = obj.nome || '';
+  document.getElementById('cpf').value = obj.cpf || '';
+  document.getElementById('rg').value = obj.rg || '';
+  document.getElementById('nascimento').value = obj.nascimento || '';
+  document.getElementById('telefone').value = obj.telefone || '';
+  document.getElementById('email').value = obj.email || '';
+  document.getElementById('estadoCivil').value = obj.estadoCivil || '';
+  document.getElementById('sexo').value = obj.sexo || '';
+  document.getElementById('cep').value = obj.cep || '';
+  document.getElementById('rua').value = obj.rua || '';
+  document.getElementById('numero').value = obj.numero || '';
+  document.getElementById('complemento').value = obj.complemento || '';
+  document.getElementById('bairro').value = obj.bairro || '';
+  document.getElementById('cidade').value = obj.cidade || '';
+  document.getElementById('uf').value = obj.uf || '';
+  document.getElementById('endereco').value = obj.endereco || '';
+  document.getElementById('admissao').value = obj.admissao || '';
+  document.getElementById('dep').value = obj.departamento || '';
+  document.getElementById('cargo').value = obj.cargo || '';
+  document.getElementById('salario').value = obj.salario || '';
+  document.getElementById('status').value = obj.status || (obj.status && obj.status.toLowerCase() === 'ativo' ? 'Ativo' : obj.status);
+  if(obj.foto) document.getElementById('photo-preview').src = obj.foto;
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  populateSelectsEditar();
+  handlePhotoInputEditar();
   maskCPFField(document.getElementById('cpf'));
   maskRGField(document.getElementById('rg'));
   maskPhoneField(document.getElementById('telefone'));
-  wireForm();
+  const obj = prefillFromLocalStorage();
+  prefillValues(obj);
+  wireEditarForm();
 });

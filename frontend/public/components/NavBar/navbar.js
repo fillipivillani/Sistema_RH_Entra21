@@ -1,7 +1,7 @@
-(function(){
-  function render(){
+(function () {
+  function render() {
     const container = document.getElementById('site-navbar');
-    if(!container) return;
+    if (!container) return;
     container.innerHTML = `
       <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
         <div class="container-fluid">
@@ -24,18 +24,18 @@
       </nav>
     `;
     const links = container.querySelectorAll('a.nav-link');
-    const currentFile = (function(){
+    const currentFile = (function () {
       const href = window.location.href;
       const parts = href.split('/');
-      let last = parts.pop() || parts.pop(); 
+      let last = parts.pop() || parts.pop();
       return last;
     })();
-    links.forEach(a=>{
+    links.forEach(a => {
       const ahref = a.getAttribute('href').split('/').pop();
-      if(ahref === currentFile || (currentFile === '' && ahref === 'dashboard.html')){
+      if (ahref === currentFile || (currentFile === '' && ahref === 'dashboard.html')) {
         a.classList.add('active');
       }
     });
   }
-  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', render); else render();
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', render); else render();
 })();
