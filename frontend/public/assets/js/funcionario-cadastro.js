@@ -142,7 +142,8 @@ function wireForm(){
       departamento: document.getElementById('dep').value,
       cargo: document.getElementById('cargo').value,
       salario: document.getElementById('salario').value,
-      status: document.getElementById('status').value
+      status: document.getElementById('status').value,
+      matricula: document.getElementById('matricula').value
     };
     // attach photo preview (if any)
     const photoSrc = document.getElementById('photo-preview').src;

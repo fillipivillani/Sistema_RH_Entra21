@@ -139,7 +139,8 @@ function wireEditarForm(){
       departamento: document.getElementById('dep').value,
       cargo: document.getElementById('cargo').value,
       salario: document.getElementById('salario').value,
-      status: document.getElementById('status').value
+      status: document.getElementById('status').value,
+      matricula: document.getElementById('matricula').value
     };
     // include id from the editingFuncionario stored earlier
     try{
@@ -204,6 +205,7 @@ function prefillValues(obj){
   document.getElementById('cargo').value = obj.cargo || '';
   document.getElementById('salario').value = obj.salario || '';
   document.getElementById('status').value = obj.status || (obj.status && obj.status.toLowerCase() === 'ativo' ? 'Ativo' : obj.status);
+  document.getElementById('matricula').value = obj.matricula || '';
   if(obj.foto) document.getElementById('photo-preview').src = obj.foto;
 }
 
