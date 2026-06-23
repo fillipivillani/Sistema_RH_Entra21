@@ -1,9 +1,28 @@
 // Dados de exemplo "MOCK" - em um cenário real, esses dados viriam do backend via API pessoal
-const funcionarios = [
-  {id:1,nome:'Ana Silva',cpf:'123.456.789-00',cargo:'Analista',departamento:'RH',status:'Ativo',admissao:'2022-03-01',foto:''},
-  {id:2,nome:'Bruno Costa',cpf:'987.654.321-11',cargo:'Desenvolvedor',departamento:'TI',status:'Ativo',admissao:'2021-11-15',foto:''},
-  {id:3,nome:'Carla Souza',cpf:'456.123.789-22',cargo:'Designer',departamento:'Marketing',status:'Inativo',admissao:'2020-06-20',foto:''}
+let funcionarios = [
+  {id:1,nome:'Ana Silva',cpf:'123.456.789-00',cargo:'Analista',departamento:'RH',status:'Ativo',admissao:'2022-03-01',foto:'../assets/images/avatar-placeholder.png'},
+  {id:2,nome:'Bruno Costa',cpf:'987.654.321-11',cargo:'Desenvolvedor',departamento:'TI',status:'Ativo',admissao:'2021-11-15',foto:'../assets/images/avatar-placeholder.png'},
+  {id:3,nome:'Carla Souza',cpf:'456.123.789-22',cargo:'Designer',departamento:'Marketing',status:'Inativo',admissao:'2020-06-20',foto:'../assets/images/avatar-placeholder.png'}
 ];
+
+const STORAGE_KEY = 'funcionariosData';
+
+function loadStoredFuncionarios(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){
+      const parsed = JSON.parse(raw);
+      if(Array.isArray(parsed) && parsed.length) funcionarios = parsed;
+    } else {
+      // save initial mock
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(funcionarios));
+    }
+  }catch(e){ console.warn('Erro ao carregar funcionarios do localStorage', e); }
+}
+
+function saveStoredFuncionarios(list){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); }catch(e){ console.warn('Erro ao salvar funcionarios', e); }
+}
 
 function formatDate(d){
   const dt = new Date(d);
@@ -16,7 +35,7 @@ function renderTable(list){
   list.forEach(f=>{
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td><img class="avatar" src="/assets/images/avatar-placeholder.png" alt="Foto"></td>
+      <td><img class="avatar" src="${f.foto && f.foto.length ? f.foto : '../assets/images/avatar-placeholder.png'}" alt="Foto"></td>
       <td>${f.nome}</td>
       <td>${f.cpf}</td>
       <td>${f.cargo}</td>
@@ -62,7 +81,11 @@ function wireActions(){
     if(action==='view'){
       alert('Visualizar: '+func.nome);
     }else if(action==='edit'){
-      alert('Editar: '+func.nome);
+        // store the selected employee in localStorage and navigate to the edit page
+        try{
+          localStorage.setItem('editingFuncionario', JSON.stringify(func));
+        }catch(e){ console.warn('localStorage not available', e); }
+        window.location.href = 'funcionario-editar.html';
     }else if(action==='delete'){
       if(confirm('Deseja excluir '+func.nome+'?')){
         alert('Excluído (simulado)');
@@ -87,10 +110,12 @@ function populateSelects(){
 }
 
 document.addEventListener('DOMContentLoaded', function(){
+  // try to load stored funcionarios (persisted edits and photos)
+  loadStoredFuncionarios();
   populateSelects();
   renderTable(funcionarios);
   wireActions();
   document.getElementById('btn-filter').addEventListener('click', applyFilters);
   document.getElementById('btn-clear').addEventListener('click', ()=>{document.getElementById('filters').reset(); renderTable(funcionarios);});
-  document.getElementById('btn-new').addEventListener('click', ()=>{alert('Abrir formulário de novo funcionário (simulado)');});
+  document.getElementById('btn-new').addEventListener('click', ()=>{ window.location.href = 'funcionario-cadastro.html'; });
 });
