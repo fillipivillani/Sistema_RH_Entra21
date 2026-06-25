@@ -1,3 +1,14 @@
+body {
+  margin-left: 260px;
+  transition: margin-left 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  body {
+    margin-left: 0;
+  }
+}
+
 .container h2{font-weight:700}
 .table img.avatar{width:40px;height:40px;border-radius:50%;object-fit:cover}
 .actions .btn{margin-right:6px}

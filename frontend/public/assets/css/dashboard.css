@@ -1,4 +1,15 @@
-body { background-color: #f8fafc; }
+body { 
+  background-color: #f8fafc; 
+  margin-left: 260px;
+  transition: margin-left 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  body {
+    margin-left: 0;
+  }
+}
+
 .main-card { max-width: 900px; margin: 36px auto; }
 .card-title { font-weight: 700; }
 .message-box { margin-top: 18px; }
