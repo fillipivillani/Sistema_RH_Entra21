@@ -27,6 +27,12 @@
             </a>
           </li>
           <li class="nav-item-sidebar">
+            <a href="departamentos.html" class="nav-link-sidebar" data-page="departamentos.html">
+              <span class="nav-icon-sidebar">🏢</span>
+              <span>Departamentos</span>
+            </a>
+          </li>
+          <li class="nav-item-sidebar">
             <a href="funcionario-cadastro.html" class="nav-link-sidebar" data-page="funcionario-cadastro.html">
               <span class="nav-icon-sidebar">➕</span>
               <span>Novo Funcionário</span>
