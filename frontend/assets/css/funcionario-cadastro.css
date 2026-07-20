@@ -1,5 +1,42 @@
+/* ============================================================
+   Cadastro de Funcionário — Sistema RH
+   Tokens de design
+   ============================================================ */
+:root {
+  --clr-primary: #4f46e5;
+  --clr-primary-dark: #4338ca;
+  --clr-primary-light: #eef2ff;
+  --clr-success: #10b981;
+  --clr-success-light: #ecfdf5;
+  --clr-danger: #ef4444;
+  --clr-text: #0f172a;
+  --clr-muted: #64748b;
+  --clr-muted-light: #94a3b8;
+  --clr-border: #e2e8f0;
+  --clr-surface: #ffffff;
+  --clr-bg: #f1f5f9;
+
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1.1rem;
+
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 12px 28px -8px rgba(15, 23, 42, 0.12), 0 4px 8px -4px rgba(15, 23, 42, 0.06);
+  --shadow-primary: 0 10px 20px -6px rgba(79, 70, 229, 0.45);
+
+  --font-display: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+/* ============================================================
+   Base / Sidebar
+   ============================================================ */
 body {
   margin-left: 260px;
+  background-color: var(--clr-bg);
+  background-image: radial-gradient(circle at 100% 0%, #eef1ff 0%, transparent 45%);
+  font-family: var(--font-body);
+  color: var(--clr-text);
   transition: margin-left 0.3s ease;
 }
 
@@ -9,14 +46,436 @@ body {
   }
 }
 
-.avatar-preview {
-    width: 84px;
-    height: 84px;
-    border-radius: 8px;
-    object-fit: cover;
-    border: 1px solid #e6e6e6
+h2, h4, h5 {
+  font-family: var(--font-display);
 }
 
-.card {
-    border-radius: 10px
+/* ============================================================
+   Cabeçalho da página
+   ============================================================ */
+.page-eyebrow {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--clr-primary);
+  background: var(--clr-primary-light);
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  margin-bottom: 0.6rem;
+}
+
+.page-header h2 {
+  font-weight: 800;
+  color: var(--clr-text);
+  letter-spacing: -0.01em;
+}
+
+/* ============================================================
+   Tabela (reaproveitado em outras telas)
+   ============================================================ */
+.table img.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.actions .btn {
+  margin-right: 6px;
+}
+
+/* ============================================================
+   Cartão do formulário
+   ============================================================ */
+#form-cadastro.card {
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  background: var(--clr-surface);
+}
+
+.form-required-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: var(--clr-bg);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  padding: 0.35rem 0.75rem;
+  width: fit-content;
+}
+
+/* ============================================================
+   Fieldsets / títulos de seção
+   ============================================================ */
+fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--clr-text);
+  border-bottom: 1px solid var(--clr-border);
+  padding-bottom: 0.75rem;
+  margin-bottom: 1.35rem;
+  width: 100%;
+}
+
+.section-title::before {
+  content: "";
+  width: 5px;
+  height: 1.15rem;
+  border-radius: 3px;
+  background: var(--clr-primary);
+  display: inline-block;
+  flex: 0 0 auto;
+}
+
+#formacao-pane .card-header {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.95rem;
+  background-color: var(--clr-surface);
+  border-bottom: 1px solid var(--clr-border);
+  color: var(--clr-text);
+}
+
+#formacao-pane .card {
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ============================================================
+   Campos de formulário
+   ============================================================ */
+.form-label {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--clr-text);
+  margin-bottom: 0.35rem;
+}
+
+.form-control,
+.form-select {
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  padding: 0.55rem 0.8rem;
+  font-size: 0.925rem;
+  color: var(--clr-text);
+  background-color: #fff;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-control::placeholder {
+  color: var(--clr-muted-light);
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--clr-primary);
+  box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.15);
+}
+
+.form-text {
+  font-size: 0.8rem;
+  color: var(--clr-muted);
+}
+
+.input-group-text {
+  background-color: var(--clr-bg);
+  border: 1px solid var(--clr-border);
+  color: var(--clr-muted);
+  font-weight: 600;
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+}
+
+/* Validação */
+.is-invalid,
+.form-control.is-invalid,
+.form-select.is-invalid {
+  border-color: var(--clr-danger) !important;
+}
+
+.invalid-feedback {
+  font-size: 0.8rem;
+}
+
+/* UF em maiúsculas */
+.uf-input {
+  text-transform: uppercase;
+}
+
+/* ============================================================
+   STEPPER — navegação entre as 3 etapas
+   ============================================================ */
+.step-nav {
+  list-style: none;
+  display: flex;
+  padding: 0;
+  margin: 0 0 2rem;
+  position: relative;
+}
+
+.step-item {
+  flex: 1;
+  position: relative;
+  text-align: center;
+}
+
+/* linha conectando os círculos */
+.step-item:not(:first-child)::before {
+  content: "";
+  position: absolute;
+  top: 23px;
+  left: -50%;
+  width: 100%;
+  height: 2px;
+  background: var(--clr-border);
+  z-index: 0;
+  transition: background-color 0.25s ease;
+}
+
+.step-item.step-complete:not(:first-child)::before {
+  background: var(--clr-success);
+}
+
+.step-nav .nav-link {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+  width: 100%;
+  background: transparent;
+  border: 0;
+  padding: 0.25rem 0.5rem 0;
+  color: var(--clr-muted);
+  cursor: pointer;
+}
+
+.step-nav .step-number {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--clr-surface);
+  border: 2px solid var(--clr-border);
+  color: var(--clr-muted);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+
+.step-nav .nav-link:hover .step-number {
+  border-color: var(--clr-primary);
+  color: var(--clr-primary);
+}
+
+.step-nav .nav-link.active .step-number {
+  background: var(--clr-primary);
+  border-color: var(--clr-primary);
+  color: #fff;
+  box-shadow: var(--shadow-primary);
+  transform: scale(1.05);
+}
+
+.step-nav .nav-link.step-complete .step-number {
+  background: var(--clr-success);
+  border-color: var(--clr-success);
+  color: transparent;
+}
+
+.step-nav .nav-link.step-complete .step-number::after {
+  content: "\2713";
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.step-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.step-label {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--clr-muted);
+  transition: color 0.2s ease;
+}
+
+.step-desc {
+  font-size: 0.75rem;
+  color: var(--clr-muted-light);
+}
+
+.step-nav .nav-link.active .step-label {
+  color: var(--clr-primary);
+}
+
+.step-nav .nav-link.step-complete .step-label {
+  color: var(--clr-success);
+}
+
+@media (max-width: 640px) {
+  .step-desc {
+    display: none;
+  }
+  .step-label {
+    font-size: 0.78rem;
+  }
+  .step-nav .step-number {
+    width: 38px;
+    height: 38px;
+    font-size: 0.9rem;
+  }
+  .step-item:not(:first-child)::before {
+    top: 19px;
+  }
+}
+
+/* ============================================================
+   Botões
+   ============================================================ */
+.btn {
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-radius: var(--radius-sm);
+  padding: 0.55rem 1.3rem;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.15s ease;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn-primary {
+  background: var(--clr-primary);
+  border-color: var(--clr-primary);
+  box-shadow: var(--shadow-primary);
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background: var(--clr-primary-dark);
+  border-color: var(--clr-primary-dark);
+}
+
+.btn-outline-primary {
+  color: var(--clr-primary);
+  border-color: var(--clr-primary);
+}
+
+.btn-outline-primary:hover {
+  background: var(--clr-primary);
+  border-color: var(--clr-primary);
+}
+
+.btn-outline-secondary {
+  color: var(--clr-muted);
+  border-color: var(--clr-border);
+}
+
+.btn-outline-secondary:hover {
+  background: var(--clr-bg);
+  border-color: var(--clr-muted-light);
+  color: var(--clr-text);
+}
+
+.btn-ghost {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--clr-muted);
+}
+
+.btn-ghost:hover {
+  background: var(--clr-bg);
+  color: var(--clr-danger);
+}
+
+/* Setas nos botões de navegação entre etapas */
+.btn-step-next::after {
+  content: "\2192";
+  margin-left: 0.45rem;
+  display: inline-block;
+  transition: transform 0.15s ease;
+}
+
+.btn-step-next:hover::after {
+  transform: translateX(3px);
+}
+
+.btn-step-prev::before {
+  content: "\2190";
+  margin-right: 0.45rem;
+  display: inline-block;
+  transition: transform 0.15s ease;
+}
+
+.btn-step-prev:hover::before {
+  transform: translateX(-3px);
+}
+
+#btn-save {
+  padding-left: 1.6rem;
+  padding-right: 1.6rem;
+}
+
+/* ============================================================
+   Foto / Avatar / Dropzone
+   ============================================================ */
+.avatar-preview {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--clr-surface);
+  box-shadow: 0 0 0 2px var(--clr-border);
+  flex: 0 0 auto;
+}
+
+.photo-dropzone {
+  background: var(--clr-bg);
+  border-radius: var(--radius-md);
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.photo-dropzone.dragover {
+  background-color: var(--clr-primary-light);
+  border-color: var(--clr-primary) !important;
+}
+
+.border-dashed {
+  border-style: dashed !important;
+  border-width: 2px !important;
+  border-color: var(--clr-border) !important;
+}
+
+/* ============================================================
+   Transições de aba
+   ============================================================ */
+.tab-pane {
+  transition: opacity 0.15s linear;
 }
