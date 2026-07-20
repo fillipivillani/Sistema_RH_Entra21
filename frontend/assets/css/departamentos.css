@@ -1,0 +1,50 @@
+body {
+  margin-left: 260px;
+  background-color: #f8fafc;
+}
+
+@media (max-width: 768px) {
+  body {
+    margin-left: 0;
+  }
+}
+
+.page-title {
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+.departamento-card {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e8e8e8;
+  overflow: hidden;
+}
+
+.departamento-header {
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  color: white;
+  padding: 16px 20px;
+}
+
+.departamento-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.departamento-body {
+  padding: 16px 20px;
+}
+
+.departamento-description {
+  margin: 0;
+  color: #666;
+}
+
+.departamento-footer {
+  padding: 12px 20px;
+  border-top: 1px solid #eee;
+  text-align: right;
+}
