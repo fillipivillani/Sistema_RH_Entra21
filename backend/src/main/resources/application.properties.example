@@ -3,10 +3,10 @@ spring.application.name=Sistema_RH_Entra21
 # Servidor
 server.port=8080
 
-# Banco de dados
+# Banco de dados — copie para application.properties e ajuste as credenciais
 spring.datasource.url=jdbc:postgresql://localhost:5432/SistemaRhEntra21
 spring.datasource.username=postgres
-spring.datasource.password=123yuri123
+spring.datasource.password=SUA_SENHA_AQUI
 spring.datasource.driver-class-name=org.postgresql.Driver
 
 # JPA
