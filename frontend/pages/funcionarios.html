@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Funcionários - Sistema RH</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../assets/css/navbar.css">
   <link rel="stylesheet" href="../assets/css/funcionarios.css">
 </head>
@@ -12,63 +15,93 @@
   <div id="site-navbar"></div>
 
   <main class="container my-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <h2>Funcionários</h2>
-      <a href="funcionario-cadastro.html" class="btn btn-primary">Novo Funcionário</a>
+    <div class="page-header d-flex justify-content-between align-items-end flex-wrap gap-3 mb-4">
+      <div>
+        <span class="page-eyebrow">Recursos Humanos</span>
+        <h2 class="mb-1">Funcionários</h2>
+        <p class="text-muted mb-0" id="results-summary">Carregando...</p>
+      </div>
+      <a href="funcionario-cadastro.html" class="btn btn-primary">
+        <span class="btn-icon">+</span> Novo Funcionário
+      </a>
     </div>
 
-    <div class="card mb-3">
+    <div class="card filter-card mb-3">
       <div class="card-body">
-        <form id="filters" class="row g-2">
+        <form id="filters" class="row g-3">
           <div class="col-md-3">
-            <label class="form-label">Nome</label>
-            <input type="text" class="form-control" id="filter-nome" placeholder="Nome">
+            <label class="form-label" for="filter-nome">Nome</label>
+            <input type="text" class="form-control" id="filter-nome" placeholder="Buscar por nome" autocomplete="off">
           </div>
           <div class="col-md-2">
-            <label class="form-label">CPF</label>
-            <input type="text" class="form-control" id="filter-cpf" placeholder="CPF">
+            <label class="form-label" for="filter-cpf">CPF</label>
+            <input type="text" class="form-control" id="filter-cpf" placeholder="000.000.000-00" autocomplete="off">
           </div>
           <div class="col-md-2">
-            <label class="form-label">Departamento</label>
+            <label class="form-label" for="filter-dep">Departamento</label>
             <select id="filter-dep" class="form-select"><option value="">Todos</option></select>
           </div>
           <div class="col-md-2">
-            <label class="form-label">Cargo</label>
+            <label class="form-label" for="filter-cargo">Cargo</label>
             <select id="filter-cargo" class="form-select"><option value="">Todos</option></select>
           </div>
-          <div class="col-md-2">
-            <label class="form-label">Status</label>
+          <div class="col-md-3">
+            <label class="form-label" for="filter-status">Status</label>
             <select id="filter-status" class="form-select">
               <option value="">Todos</option>
-              <option value="ativo">Ativo</option>
-              <option value="inativo">Inativo</option>
+              <option value="ATIVO">Ativo</option>
+              <option value="INATIVO">Inativo</option>
+              <option value="AFASTADO">Afastado</option>
+              <option value="DESLIGADO">Desligado</option>
             </select>
           </div>
-          <div class="col-12 text-end mt-2">
-            <button type="button" id="btn-filter" class="btn btn-outline-primary">Filtrar</button>
-            <button type="button" id="btn-clear" class="btn btn-link">Limpar</button>
+          <div class="col-12 d-flex justify-content-end align-items-center gap-2 mt-1">
+            <button type="button" id="btn-clear" class="btn btn-link">Limpar filtros</button>
+            <button type="submit" id="btn-filter" class="btn btn-outline-primary">Filtrar</button>
           </div>
         </form>
       </div>
     </div>
 
-    <div class="table-responsive">
-      <table class="table table-hover" id="table-funcionarios">
-        <thead class="table-light">
-          <tr>
-            <th>Nome</th>
-            <th>CPF</th>
-            <th>Cargo</th>
-            <th>Departamento</th>
-            <th>Status</th>
-            <th>Admissão</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+    <div class="card table-card">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0" id="table-funcionarios">
+          <thead>
+            <tr>
+              <th class="col-avatar"></th>
+              <th>Nome</th>
+              <th>CPF</th>
+              <th>Cargo</th>
+              <th>Departamento</th>
+              <th>Status</th>
+              <th>Admissão</th>
+              <th class="text-end">Ações</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
     </div>
   </main>
+
+  <!-- MODAL DE CONFIRMAÇÃO DE EXCLUSÃO -->
+  <div class="modal fade" id="modal-delete" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body p-4">
+          <h5 class="mb-2">Excluir funcionário</h5>
+          <p class="text-muted mb-0">
+            Tem certeza que deseja excluir <strong id="modal-delete-name">este funcionário</strong>?
+            Essa ação não pode ser desfeita.
+          </p>
+        </div>
+        <div class="modal-footer border-0 pt-0 px-4 pb-4">
+          <button type="button" class="btn btn-ghost" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-outline-danger" id="btn-confirm-delete">Excluir</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="../components/navbar.js"></script>
