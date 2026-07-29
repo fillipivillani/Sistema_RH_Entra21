@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Departamentos - Sistema RH</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../assets/css/navbar.css">
   <link rel="stylesheet" href="../assets/css/departamentos.css">
 </head>
@@ -12,43 +15,91 @@
   <div id="site-navbar"></div>
 
   <main class="container-fluid my-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h1 class="page-title">Departamentos</h1>
-      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#departamentoModal">Novo Departamento</button>
+    <div class="page-header d-flex justify-content-between align-items-end flex-wrap gap-3 mb-4">
+      <div>
+        <span class="page-eyebrow">Recursos Humanos</span>
+        <h1 class="page-title mb-1">Departamentos</h1>
+        <p class="text-muted mb-0" id="results-summary">Carregando...</p>
+      </div>
+      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#departamentoModal" id="btn-novo">
+        <span class="btn-icon">+</span> Novo Departamento
+      </button>
     </div>
 
-    <div id="loading" class="text-center my-5">
+    <div id="loading" class="loading-state text-center my-5">
       <div class="spinner-border" role="status"></div>
+      <p class="text-muted mt-3 mb-0">Carregando departamentos...</p>
     </div>
 
     <div id="departamentos-container" class="row g-4"></div>
 
-    <p id="empty-state" class="text-center text-muted my-5" hidden>Nenhum departamento cadastrado.</p>
-    <div id="alerta" class="alert alert-danger" hidden></div>
+    <div id="empty-state" class="empty-state" hidden>
+      <div class="empty-icon">🏢</div>
+      <strong>Nenhum departamento cadastrado</strong>
+      <span class="text-muted d-block mb-3">Comece criando o primeiro departamento da empresa.</span>
+      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#departamentoModal">
+        <span class="btn-icon">+</span> Novo Departamento
+      </button>
+    </div>
+
+    <div id="alerta" class="alert-box" hidden>
+      <div class="d-flex align-items-start gap-3">
+        <span class="alert-icon">⚠️</span>
+        <div class="flex-grow-1">
+          <strong>Não foi possível carregar os departamentos</strong>
+          <p id="alerta-msg" class="text-muted mb-0"></p>
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-secondary" id="btn-retry">Tentar novamente</button>
+      </div>
+    </div>
   </main>
 
+  <!-- MODAL DE CRIAÇÃO / EDIÇÃO -->
   <div class="modal fade" id="departamentoModal" tabindex="-1">
-    <div class="modal-dialog">
-      <form id="form-departamento" class="modal-content">
+    <div class="modal-dialog modal-dialog-centered">
+      <form id="form-departamento" class="modal-content" novalidate>
         <div class="modal-header">
-          <h1 class="modal-title fs-5">Novo Departamento</h1>
+          <h1 class="modal-title fs-5" id="modal-title">Novo Departamento</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
+          <div id="form-erro" class="form-erro" hidden></div>
+          <input type="hidden" name="id">
           <div class="mb-3">
-            <label class="form-label">Nome</label>
-            <input type="text" name="nome" class="form-control" required>
+            <label class="form-label" for="input-nome">Nome <span class="text-danger">*</span></label>
+            <input type="text" id="input-nome" name="nome" class="form-control" maxlength="80" required autofocus>
+            <div class="invalid-feedback">Informe o nome do departamento.</div>
           </div>
-          <div class="mb-3">
-            <label class="form-label">Descrição</label>
-            <textarea name="descricao" class="form-control" rows="3"></textarea>
+          <div class="mb-1">
+            <label class="form-label" for="input-descricao">Descrição</label>
+            <textarea id="input-descricao" name="descricao" class="form-control" rows="3" maxlength="240"></textarea>
+            <div class="form-text text-end" id="char-count">0/240</div>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Salvar</button>
+          <button type="button" class="btn btn-ghost" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="btn-salvar">Salvar</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- MODAL DE CONFIRMAÇÃO DE EXCLUSÃO -->
+  <div class="modal fade" id="modal-delete" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body p-4">
+          <h5 class="mb-2">Excluir departamento</h5>
+          <p class="text-muted mb-0">
+            Tem certeza que deseja excluir <strong id="modal-delete-name">este departamento</strong>?
+            Essa ação não pode ser desfeita.
+          </p>
+        </div>
+        <div class="modal-footer border-0 pt-0 px-4 pb-4">
+          <button type="button" class="btn btn-ghost" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-outline-danger" id="btn-confirm-delete">Excluir</button>
+        </div>
+      </div>
     </div>
   </div>
 
