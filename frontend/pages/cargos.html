@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cargos - Sistema RH</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/navbar.css">
+  <link rel="stylesheet" href="../assets/css/cargos.css">
+</head>
+<body>
+  <div id="site-navbar"></div>
+
+  <main class="container-fluid my-4">
+
+    <!-- ALERTAS (sucesso / erro) -->
+    <div id="alert-stack" class="alert-stack"></div>
+
+    <div class="page-header d-flex justify-content-between align-items-end flex-wrap gap-3 mb-4">
+      <div>
+        <span class="page-eyebrow">Recursos Humanos</span>
+        <h1 class="page-title mb-1">Cargos</h1>
+        <p class="text-muted mb-0" id="results-summary">Carregando...</p>
+      </div>
+      <button class="btn btn-primary" id="btn-novo-cargo">
+        <i class="bi bi-plus-lg"></i> Novo Cargo
+      </button>
+    </div>
+
+    <!-- FILTROS -->
+    <div class="card filter-card mb-3">
+      <div class="card-body">
+        <form id="filters" class="row g-3">
+          <div class="col-md-5">
+            <label class="form-label" for="filter-nome">Buscar por nome</label>
+            <div class="search-input">
+              <i class="bi bi-search"></i>
+              <input type="text" class="form-control" id="filter-nome" placeholder="Ex.: Analista de RH" autocomplete="off">
+            </div>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label" for="filter-departamento">Departamento</label>
+            <select id="filter-departamento" class="form-select"><option value="">Todos</option></select>
+          </div>
+          <div class="col-md-2">
+            <label class="form-label" for="filter-status">Status</label>
+            <select id="filter-status" class="form-select">
+              <option value="">Todos</option>
+              <option value="ATIVO">Ativo</option>
+              <option value="INATIVO">Inativo</option>
+            </select>
+          </div>
+          <div class="col-md-2 d-flex align-items-end">
+            <button type="button" id="btn-clear" class="btn btn-outline-secondary w-100">
+              <i class="bi bi-x-lg"></i> Limpar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- TABELA -->
+    <div class="card table-card">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0" id="table-cargos">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Nome</th>
+              <th>Departamento</th>
+              <th>Nível</th>
+              <th>Faixa Salarial</th>
+              <th>Status</th>
+              <th class="text-end">Ações</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="card-footer pagination-footer d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <span class="text-muted small" id="pagination-info"></span>
+        <nav aria-label="Paginação de cargos">
+          <ul class="pagination mb-0" id="pagination"></ul>
+        </nav>
+      </div>
+    </div>
+  </main>
+
+  <!-- MODAL CADASTRO / EDIÇÃO -->
+  <div class="modal fade" id="modal-cargo" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <form id="form-cargo" class="modal-content" novalidate>
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="modal-cargo-title">Novo Cargo</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div id="form-erro" class="form-erro" hidden></div>
+          <input type="hidden" name="id">
+
+          <fieldset class="mb-4">
+            <legend class="section-title h6">Identificação</legend>
+            <div class="row g-3">
+              <div class="col-md-8">
+                <label class="form-label" for="input-nome">Nome do Cargo <span class="text-danger">*</span></label>
+                <input type="text" id="input-nome" name="nome" class="form-control" maxlength="80" required>
+                <div class="invalid-feedback">Informe o nome do cargo.</div>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label" for="input-codigo">Código <span class="text-danger">*</span></label>
+                <input type="text" id="input-codigo" name="codigo" class="form-control text-uppercase" maxlength="20" placeholder="Ex.: RH-001" required>
+                <div class="invalid-feedback">Informe um código único.</div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="input-departamento">Departamento <span class="text-danger">*</span></label>
+                <select id="input-departamento" name="departamento" class="form-select" required>
+                  <option value="">Selecione</option>
+                </select>
+                <div class="invalid-feedback">Selecione um departamento.</div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="input-nivel">Nível do Cargo <span class="text-danger">*</span></label>
+                <select id="input-nivel" name="nivel" class="form-select" required>
+                  <option value="">Selecione</option>
+                  <option>Júnior</option>
+                  <option>Pleno</option>
+                  <option>Sênior</option>
+                  <option>Especialista</option>
+                  <option>Coordenador</option>
+                  <option>Gerente</option>
+                  <option>Diretor</option>
+                </select>
+                <div class="invalid-feedback">Selecione o nível do cargo.</div>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset class="mb-4">
+            <legend class="section-title h6">Descrição</legend>
+            <div class="row g-3">
+              <div class="col-12">
+                <label class="form-label" for="input-descricao">Descrição das Atividades</label>
+                <textarea id="input-descricao" name="descricao" class="form-control" rows="3" maxlength="600"></textarea>
+              </div>
+              <div class="col-12">
+                <label class="form-label" for="input-requisitos">Requisitos do Cargo</label>
+                <textarea id="input-requisitos" name="requisitos" class="form-control" rows="3" maxlength="600"></textarea>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="input-escolaridade">Escolaridade Mínima</label>
+                <select id="input-escolaridade" name="escolaridade" class="form-select">
+                  <option value="">Selecione</option>
+                  <option>Ensino Fundamental</option>
+                  <option>Ensino Médio</option>
+                  <option>Técnico</option>
+                  <option>Tecnólogo</option>
+                  <option>Ensino Superior</option>
+                  <option>Pós-Graduação</option>
+                  <option>MBA</option>
+                  <option>Mestrado</option>
+                  <option>Doutorado</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="input-cargaHoraria">Carga Horária Semanal (h) <span class="text-danger">*</span></label>
+                <input type="number" id="input-cargaHoraria" name="cargaHoraria" class="form-control" min="1" max="60" required>
+                <div class="invalid-feedback">Informe a carga horária semanal.</div>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset class="mb-4">
+            <legend class="section-title h6">Remuneração e Jornada</legend>
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label class="form-label" for="input-salarioInicial">Salário Inicial <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text">R$</span>
+                  <input type="number" step="0.01" min="0" id="input-salarioInicial" name="salarioInicial" class="form-control" required>
+                </div>
+                <div class="invalid-feedback">Informe o salário inicial.</div>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label" for="input-salarioMaximo">Salário Máximo <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text">R$</span>
+                  <input type="number" step="0.01" min="0" id="input-salarioMaximo" name="salarioMaximo" class="form-control" required>
+                </div>
+                <div class="invalid-feedback" id="feedback-salarioMaximo">Deve ser maior ou igual ao inicial.</div>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label" for="input-tipoJornada">Tipo de Jornada <span class="text-danger">*</span></label>
+                <select id="input-tipoJornada" name="tipoJornada" class="form-select" required>
+                  <option value="">Selecione</option>
+                  <option>Presencial</option>
+                  <option>Híbrido</option>
+                  <option>Remoto</option>
+                </select>
+                <div class="invalid-feedback">Selecione o tipo de jornada.</div>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label" for="input-status">Status</label>
+                <select id="input-status" name="status" class="form-select">
+                  <option value="ATIVO">Ativo</option>
+                  <option value="INATIVO">Inativo</option>
+                </select>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ghost" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="btn-salvar-cargo">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL VISUALIZAR -->
+  <div class="modal fade" id="modal-visualizar" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div>
+            <h1 class="modal-title fs-5 mb-1" id="view-nome">Cargo</h1>
+            <span class="text-muted small" id="view-codigo"></span>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="view-grid">
+            <div class="view-item">
+              <span class="view-label">Departamento</span>
+              <span class="view-value" id="view-departamento">—</span>
+            </div>
+            <div class="view-item">
+              <span class="view-label">Nível</span>
+              <span class="view-value" id="view-nivel">—</span>
+            </div>
+            <div class="view-item">
+              <span class="view-label">Status</span>
+              <span class="view-value" id="view-status">—</span>
+            </div>
+            <div class="view-item">
+              <span class="view-label">Faixa Salarial</span>
+              <span class="view-value" id="view-salario">—</span>
+            </div>
+            <div class="view-item">
+              <span class="view-label">Carga Horária</span>
+              <span class="view-value" id="view-cargaHoraria">—</span>
+            </div>
+            <div class="view-item">
+              <span class="view-label">Tipo de Jornada</span>
+              <span class="view-value" id="view-tipoJornada">—</span>
+            </div>
+            <div class="view-item">
+              <span class="view-label">Escolaridade Mínima</span>
+              <span class="view-value" id="view-escolaridade">—</span>
+            </div>
+            <div class="view-item">
+              <span class="view-label">Criado em</span>
+              <span class="view-value" id="view-criado">—</span>
+            </div>
+            <div class="view-item">
+              <span class="view-label">Última atualização</span>
+              <span class="view-value" id="view-atualizado">—</span>
+            </div>
+          </div>
+
+          <div class="view-block">
+            <span class="view-label">Descrição das Atividades</span>
+            <p class="view-text" id="view-descricao">—</p>
+          </div>
+          <div class="view-block">
+            <span class="view-label">Requisitos do Cargo</span>
+            <p class="view-text" id="view-requisitos">—</p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fechar</button>
+          <button type="button" class="btn btn-primary" id="btn-editar-do-view">
+            <i class="bi bi-pencil"></i> Editar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE CONFIRMAÇÃO DE EXCLUSÃO -->
+  <div class="modal fade" id="modal-delete" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body p-4">
+          <h5 class="mb-2">Excluir cargo</h5>
+          <p class="text-muted mb-0">
+            Tem certeza que deseja excluir <strong id="modal-delete-name">este cargo</strong>?
+            Essa ação não pode ser desfeita.
+          </p>
+        </div>
+        <div class="modal-footer border-0 pt-0 px-4 pb-4">
+          <button type="button" class="btn btn-ghost" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-outline-danger" id="btn-confirm-delete">Excluir</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../components/navbar.js"></script>
+  <script src="../assets/js/cargos.js"></script>
+</body>
+</html>
