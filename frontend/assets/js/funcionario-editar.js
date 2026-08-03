@@ -1,4 +1,3 @@
-// Exemplo de departamentos e cargos (mesmos do cadastro)
 const _deps = ['RH','TI','Marketing','Financeiro'];
 const _cargos = ['Analista','Desenvolvedor','Designer','Gerente'];
 
@@ -9,7 +8,6 @@ function populateSelectsEditar(){
   _cargos.forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent=c; cargo.appendChild(o); });
 }
 
-// preview da imagem selecionada
 function handlePhotoInput(){
   const input = document.getElementById('photo');
   const preview = document.getElementById('photo-preview');
@@ -22,7 +20,6 @@ function handlePhotoInput(){
   });
 }
 
-// dropzone de foto (arrastar e soltar) — usa o mesmo preview acima
 function handlePhotoDropzone(){
   const input = document.getElementById('photo');
   const preview = document.getElementById('photo-preview');
@@ -45,7 +42,6 @@ function handlePhotoDropzone(){
   });
 }
 
-// ====== Filtros / máscaras de validação ======
 function onlyDigits(str){ return (str||'').toString().replace(/\D+/g,''); }
 
 function attachMask(el, maskFn){
@@ -111,7 +107,6 @@ function maskPIS(value){
     .replace(/(\d{3})\.(\d{5})\.(\d{2})(\d)/, "$1.$2.$3-$4");
 }
 
-// Campos de UF em maiúsculas (endereço e CTPS)
 function wireUppercaseUF(){
   ['uf','ufCtps'].forEach(id=>{
     const el = document.getElementById(id);
@@ -152,7 +147,6 @@ function validateEmail(email){
   return re.test(email);
 }
 
-// leva o usuário até a etapa (aba) onde está o campo com erro
 function revealField(el){
   const pane = el.closest('.tab-pane');
   if(pane){
@@ -164,7 +158,6 @@ function revealField(el){
   el.focus();
 }
 
-// ====== Busca de endereço por CEP (ViaCEP) ======
 function wireCepLookup(){
   const cepInput = document.getElementById('cep');
   const cepStatus = document.getElementById('cep-status');
@@ -208,7 +201,6 @@ function wireCepLookup(){
   cepInput.addEventListener('blur', ()=>{ if(onlyDigits(cepInput.value).length === 8) buscarCep(); });
 }
 
-// ====== Navegação "Avançar" / "Voltar" entre etapas do stepper ======
 function wireStepNavigation(){
   document.querySelectorAll('[data-step-next], [data-step-prev]').forEach(btn=>{
     btn.addEventListener('click', ()=>{
@@ -221,7 +213,6 @@ function wireStepNavigation(){
   });
 }
 
-// ====== Progresso visual do stepper (marca etapas concluídas com check) ======
 function wireStepProgress(){
   const stepButtons = Array.from(document.querySelectorAll('#cadastroTab .nav-link'));
   if(!stepButtons.length) return;
@@ -243,7 +234,6 @@ function wireStepProgress(){
   updateProgress(stepButtons[0].id);
 }
 
-/* ====== Pré-preenchimento a partir do funcionário selecionado na lista ====== */
 function carregarFuncionarioEmEdicao(){
   try{
     const raw = localStorage.getItem('editingFuncionario');
@@ -296,7 +286,6 @@ function prefillValues(obj){
   setValue('dep', obj.departamento);
   setValue('cargo', obj.cargo);
   setValue('salario', obj.salario);
-  // normaliza o status para um dos códigos do select (ATIVO/INATIVO/AFASTADO/DESLIGADO)
   setValue('status', (obj.status || 'ATIVO').toString().trim().toUpperCase());
   setValue('matricula', obj.matricula);
 
@@ -324,7 +313,6 @@ function prefillValues(obj){
   setValue('dataCertificacao', formacao.dataCertificacao);
 }
 
-/* ====== Envio do formulário (atualiza o registro existente) ====== */
 function wireForm(funcionarioId){
   const form = document.getElementById('form-editar');
 

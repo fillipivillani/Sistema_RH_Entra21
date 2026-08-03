@@ -1,7 +1,6 @@
 const STORAGE_KEY = 'cargosData';
 const PAGE_SIZE = 6;
 
-// Mesmos departamentos usados nas demais telas do sistema
 const DEPARTAMENTOS = ['RH', 'TI', 'Marketing', 'Financeiro'];
 
 const SEED_CARGOS = [
@@ -93,7 +92,6 @@ document.addEventListener('DOMContentLoaded', () => {
   popularSelectDepartamentos();
   renderAll();
 
-  /* ---------- Abrir modal para novo cargo ---------- */
   document.getElementById('btn-novo-cargo').addEventListener('click', () => {
     resetForm();
     modalCargoTitle.textContent = 'Novo Cargo';
@@ -123,7 +121,6 @@ document.addEventListener('DOMContentLoaded', () => {
     formErro.hidden = false;
   }
 
-  /* ---------- Criar / editar ---------- */
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     hideFormErro();
@@ -166,7 +163,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const id = form.id.value ? Number(form.id.value) : null;
 
-    // código único (ignorando o próprio registro em edição)
     const codigoDuplicado = cargos.some((c) => c.codigo === dados.codigo && c.id !== id);
     if (codigoDuplicado) {
       marcar('input-codigo', false);
@@ -200,7 +196,6 @@ document.addEventListener('DOMContentLoaded', () => {
     renderAll();
   });
 
-  /* ---------- Ações da tabela (visualizar / editar / excluir) ---------- */
   document.getElementById('table-cargos').addEventListener('click', (e) => {
     const btn = e.target.closest('[data-action]');
     if (!btn) return;
@@ -271,7 +266,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('view-requisitos').textContent = cargo.requisitos || 'Sem requisitos cadastrados.';
   }
 
-  /* ---------- Excluir ---------- */
   document.getElementById('btn-confirm-delete').addEventListener('click', () => {
     if (deleteTargetId == null) return;
     const cargo = cargos.find((c) => c.id === deleteTargetId);
@@ -286,7 +280,6 @@ document.addEventListener('DOMContentLoaded', () => {
     renderAll();
   });
 
-  /* ---------- Filtros ---------- */
   const filtersForm = document.getElementById('filters');
   filtersForm.addEventListener('submit', (e) => e.preventDefault());
 
@@ -308,7 +301,6 @@ document.addEventListener('DOMContentLoaded', () => {
     renderAll();
   });
 
-  /* ---------- Funções auxiliares ---------- */
   function popularSelectDepartamentos() {
     const selects = [document.getElementById('filter-departamento'), document.getElementById('input-departamento')];
     selects.forEach((select) => {
@@ -452,7 +444,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-/* ---------- Persistência ---------- */
 function loadCargos() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -475,7 +466,6 @@ function persistCargos() {
   }
 }
 
-/* ---------- Utilitários ---------- */
 function debounce(fn, delay) {
   let timer;
   return (...args) => {
