@@ -10,6 +10,45 @@ body {
   }
 }
 
-.main-card { max-width: 900px; margin: 36px auto; }
-.card-title { font-weight: 700; }
-.message-box { margin-top: 18px; }
+.main-card { 
+  max-width: 900px; 
+  margin: 36px auto; 
+}
+
+.card-title { 
+  font-weight: 700; 
+}
+
+.message-box { 
+  margin-top: 18px; 
+}
+
+.card-stat {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-stat:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08) !important;
+}
+
+.table th {
+  font-weight: 600;
+}
+
+.list-group-item {
+  transition: background-color 0.2s ease;
+}
+
+.list-group-item:hover {
+  background-color: #f8fafc;
+}
+
+.bg-warning-subtle { background-color: #fff3cd !important; }
+.text-warning { color: #664d03 !important; }
+
+.bg-danger-subtle { background-color: #f8d7da !important; }
+.text-danger { color: #842029 !important; }
+
+.bg-primary-subtle { background-color: #cfe2ff !important; }
+.text-primary { color: #084298 !important; }
