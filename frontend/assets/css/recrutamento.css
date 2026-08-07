@@ -1,0 +1,421 @@
+/* ============================================================
+   Recrutamento & Seleção — Sistema RH
+   Estilos autocontidos desta página (tokens + base + componentes)
+   ============================================================ */
+:root {
+  --clr-primary: #4f46e5;
+  --clr-primary-dark: #4338ca;
+  --clr-primary-light: #eef2ff;
+  --clr-success: #10b981;
+  --clr-success-light: #ecfdf5;
+  --clr-warning: #d97706;
+  --clr-warning-light: #fffbeb;
+  --clr-danger: #ef4444;
+  --clr-danger-light: #fef2f2;
+  --clr-text: #0f172a;
+  --clr-muted: #64748b;
+  --clr-muted-light: #94a3b8;
+  --clr-border: #e2e8f0;
+  --clr-surface: #ffffff;
+  --clr-bg: #f1f5f9;
+
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1.1rem;
+
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 12px 28px -8px rgba(15, 23, 42, 0.12), 0 4px 8px -4px rgba(15, 23, 42, 0.06);
+  --shadow-primary: 0 10px 20px -6px rgba(79, 70, 229, 0.45);
+
+  --font-display: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+body {
+  margin-left: 260px;
+  background-color: var(--clr-bg);
+  background-image: radial-gradient(circle at 100% 0%, #eef1ff 0%, transparent 45%);
+  font-family: var(--font-body);
+  color: var(--clr-text);
+  transition: margin-left 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  body { margin-left: 0; }
+}
+
+h1, h5, h6, .modal-title { font-family: var(--font-display); }
+
+/* ---------- Cabeçalho ---------- */
+.page-eyebrow {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--clr-primary);
+  background: var(--clr-primary-light);
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  margin-bottom: 0.6rem;
+}
+
+.page-title {
+  font-weight: 800;
+  color: var(--clr-text);
+  letter-spacing: -0.01em;
+}
+
+/* ---------- Alertas (toast) ---------- */
+.alert-stack {
+  position: fixed;
+  top: 1.25rem;
+  right: 1.25rem;
+  z-index: 1080;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  width: min(360px, 90vw);
+}
+
+.app-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  font-size: 0.88rem;
+  animation: slide-in 0.2s ease;
+}
+
+.app-alert.success { background: var(--clr-success-light); color: #065f46; border: 1px solid #a7f3d0; }
+.app-alert.error { background: var(--clr-danger-light); color: #991b1b; border: 1px solid #fecaca; }
+.app-alert .bi { font-size: 1.1rem; margin-top: 0.1rem; }
+.app-alert .btn-close { margin-left: auto; font-size: 0.7rem; }
+
+@keyframes slide-in {
+  from { opacity: 0; transform: translateX(12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* ---------- Cards / forms genéricos ---------- */
+.card, .modal-content {
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  background: var(--clr-surface);
+}
+
+.modal-content { box-shadow: var(--shadow-md); border: 0; }
+
+.search-input { position: relative; }
+.search-input .bi {
+  position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%);
+  color: var(--clr-muted-light);
+}
+.search-input .form-control { padding-left: 2.3rem; }
+
+.form-label { font-weight: 600; font-size: 0.85rem; color: var(--clr-text); margin-bottom: 0.35rem; }
+
+.form-control, .form-select {
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  padding: 0.55rem 0.8rem;
+  font-size: 0.925rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--clr-primary);
+  box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.15);
+}
+
+.was-validated .form-control:invalid, .form-control.is-invalid,
+.was-validated .form-select:invalid, .form-select.is-invalid {
+  border-color: var(--clr-danger) !important;
+}
+
+.form-erro {
+  background: var(--clr-danger-light);
+  color: var(--clr-danger);
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 0.85rem;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+/* ---------- Botões ---------- */
+.btn {
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-radius: var(--radius-sm);
+  padding: 0.55rem 1.3rem;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.btn:active { transform: translateY(1px); }
+.btn-sm { padding: 0.35rem 0.8rem; font-size: 0.8rem; }
+
+.btn-primary { background: var(--clr-primary); border-color: var(--clr-primary); box-shadow: var(--shadow-primary); }
+.btn-primary:hover, .btn-primary:focus { background: var(--clr-primary-dark); border-color: var(--clr-primary-dark); }
+
+.btn-outline-secondary { color: var(--clr-muted); border-color: var(--clr-border); }
+.btn-outline-secondary:hover { background: var(--clr-bg); border-color: var(--clr-muted-light); color: var(--clr-text); }
+
+.btn-outline-danger { color: var(--clr-danger); border-color: #fecaca; }
+.btn-outline-danger:hover { background: var(--clr-danger); border-color: var(--clr-danger); color: #fff; }
+
+.btn-ghost { background: transparent; border: 1px solid transparent; color: var(--clr-muted); }
+.btn-ghost:hover { background: var(--clr-bg); color: var(--clr-text); }
+
+/* ---------- Badges ---------- */
+.priority-badge, .status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 0.28rem 0.6rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.priority-alta { background: var(--clr-danger-light); color: var(--clr-danger); }
+.priority-media { background: var(--clr-warning-light); color: var(--clr-warning); }
+.priority-baixa { background: var(--clr-bg); color: var(--clr-muted); }
+
+.status-chip.aberta { background: var(--clr-success-light); color: var(--clr-success); }
+.status-chip.pausada { background: var(--clr-warning-light); color: var(--clr-warning); }
+.status-chip.encerrada { background: var(--clr-bg); color: var(--clr-muted); }
+
+/* ============================================================
+   VAGAS — grid de cards
+   ============================================================ */
+.vaga-card {
+  height: 100%;
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-lg);
+  background: var(--clr-surface);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.vaga-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.vaga-card-header {
+  padding: 1.1rem 1.25rem 0.75rem;
+  border-bottom: 1px solid var(--clr-border);
+}
+
+.vaga-titulo {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.02rem;
+  color: var(--clr-text);
+  margin: 0.4rem 0 0.15rem;
+}
+
+.vaga-departamento {
+  font-size: 0.8rem;
+  color: var(--clr-muted);
+}
+
+.vaga-card-body {
+  padding: 1rem 1.25rem;
+}
+
+.vaga-progress {
+  display: flex;
+  gap: 0.3rem;
+  margin-top: 0.6rem;
+}
+
+.vaga-progress-seg {
+  flex: 1;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--clr-bg);
+}
+
+.vaga-progress-seg.filled { background: var(--clr-primary); }
+.vaga-progress-seg.filled.contratado { background: var(--clr-success); }
+
+.vaga-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.85rem;
+  font-size: 0.8rem;
+  color: var(--clr-muted);
+}
+
+.vaga-candidatos-count {
+  font-weight: 700;
+  color: var(--clr-text);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 4rem 1.5rem;
+  color: var(--clr-muted);
+  background: var(--clr-surface);
+  border: 1px dashed var(--clr-border);
+  border-radius: var(--radius-lg);
+  width: 100%;
+}
+
+.empty-state .empty-icon { font-size: 2.2rem; margin-bottom: 0.5rem; }
+.empty-state strong { display: block; color: var(--clr-text); font-family: var(--font-display); margin-bottom: 0.25rem; }
+
+/* ============================================================
+   KANBAN
+   ============================================================ */
+.kanban-board {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(270px, 1fr);
+  gap: 1rem;
+  overflow-x: auto;
+  padding-bottom: 1rem;
+}
+
+.kanban-column {
+  background: var(--clr-bg);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--clr-border);
+  display: flex;
+  flex-direction: column;
+  min-height: 200px;
+}
+
+.kanban-column-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid var(--clr-border);
+}
+
+.kanban-column-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--clr-text);
+}
+
+.kanban-column-count {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--clr-muted);
+  padding: 0.1rem 0.55rem;
+}
+
+.kanban-column-body {
+  flex: 1;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  min-height: 120px;
+  transition: background-color 0.15s ease;
+}
+
+.kanban-column-body.drop-hover {
+  background: var(--clr-primary-light);
+  border-radius: var(--radius-md);
+}
+
+.kanban-column.col-contratado .kanban-column-header { border-top: 3px solid var(--clr-success); }
+.kanban-column.col-reprovado .kanban-column-header { border-top: 3px solid var(--clr-danger); }
+
+/* ---------- Card de candidato ---------- */
+.candidate-card {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-md);
+  padding: 0.85rem;
+  cursor: grab;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.15s ease, transform 0.15s ease, opacity 0.15s ease;
+}
+
+.candidate-card:hover { box-shadow: var(--shadow-md); }
+.candidate-card:active { cursor: grabbing; }
+
+.candidate-card.dragging {
+  opacity: 0.4;
+  transform: scale(0.98);
+}
+
+.candidate-name {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--clr-text);
+  margin: 0 0 0.2rem;
+}
+
+.candidate-meta {
+  font-size: 0.76rem;
+  color: var(--clr-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-bottom: 0.15rem;
+}
+
+.candidate-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.6rem;
+}
+
+.candidate-stars {
+  color: #f59e0b;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+}
+
+.candidate-stars .bi-star { color: var(--clr-border); }
+
+.origin-tag {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-sm);
+  background: var(--clr-primary-light);
+  color: var(--clr-primary);
+}
+
+/* ---------- Estrelas do modal ---------- */
+.star-input {
+  font-size: 1.4rem;
+  color: var(--clr-border);
+  display: flex;
+  gap: 0.3rem;
+}
+
+.star-input .bi { cursor: pointer; transition: color 0.1s ease, transform 0.1s ease; }
+.star-input .bi:hover { transform: scale(1.15); }
+.star-input .bi.filled { color: #f59e0b; }
+
+@media (max-width: 768px) {
+  .kanban-board {
+    grid-auto-columns: minmax(240px, 85vw);
+  }
+}
