@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!nome) { form.classList.add('was-validated'); form.nome.focus(); return; }
 
     const btn = document.getElementById('btn-salvar');
-    const id = form.id.value ? Number(form.id.value) : null;
+    const id = form.id.value || null;
     btn.disabled = true; btn.textContent = 'Salvando...';
     try {
       if (id && podeEditar) await API.departamentos.atualizar(id, { nome, descricao: descricao || null });
@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
   container.addEventListener('click', (e) => {
     const btn = e.target.closest('[data-action]');
     if (!btn) return;
-    const dep = departamentos.find((d) => d.id === Number(btn.dataset.id));
+    const dep = departamentos.find((d) => String(d.id) === btn.dataset.id);
     if (!dep) return;
 
     if (btn.dataset.action === 'editar') {

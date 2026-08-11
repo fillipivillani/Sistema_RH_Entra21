@@ -11,11 +11,8 @@
         <span>Sistema RH</span>
       </a>
       <ul class="navbar-nav-sidebar">
-        <li><a href="dashboard.html" class="nav-link-sidebar ${paginaAtual === 'dashboard.html' ? 'active' : ''}">Dashboard</a></li>
-        <li><a href="cargos.html" class="nav-link-sidebar ${paginaAtual === 'cargos.html' ? 'active' : ''}">Cargos</a></li>
         <li><a href="beneficios.html" class="nav-link-sidebar ${paginaAtual === 'beneficios.html' ? 'active' : ''}">Benefícios</a></li>
-        // <li><a href="recrutamento.html" class="nav-link-sidebar ${paginaAtual === 'recrutamento.html' ? 'active' : ''}">Recrutamento</a></li>
-        // <li><a href="funcionarios.html" class="nav-link-sidebar ${paginaAtual === 'funcionarios.html' ? 'active' : ''}">Funcionários</a></li>
+        <li><a href="funcionarios.html" class="nav-link-sidebar ${paginaAtual === 'funcionarios.html' ? 'active' : ''}">Funcionários</a></li>
         <li><a href="departamentos.html" class="nav-link-sidebar ${paginaAtual === 'departamentos.html' ? 'active' : ''}">Departamentos</a></li>
         <li><a href="funcionario-cadastro.html" class="nav-link-sidebar ${paginaAtual === 'funcionario-cadastro.html' ? 'active' : ''}">Novo Funcionário</a></li>
       </ul>

@@ -1,20 +1,11 @@
-const STORAGE_KEY = 'funcionariosData';
-const SEED = [
-  { id: 1, nome: 'Ana Silva', cpf: '123.456.789-00', cargo: 'Analista', departamento: 'RH', status: 'ATIVO', admissao: '2022-03-01' },
-  { id: 2, nome: 'Bruno Costa', cpf: '987.654.321-11', cargo: 'Desenvolvedor', departamento: 'TI', status: 'ATIVO', admissao: '2021-11-15' },
-  { id: 3, nome: 'Carla Souza', cpf: '456.123.789-22', cargo: 'Designer', departamento: 'Marketing', status: 'INATIVO', admissao: '2020-06-20' },
-];
-
 let funcionarios = [];
 let deleteTargetId = null;
 let deleteModal = null;
 
-document.addEventListener('DOMContentLoaded', () => {
-  funcionarios = RH.loadStorage(STORAGE_KEY, SEED);
+document.addEventListener('DOMContentLoaded', async () => {
   deleteModal = new bootstrap.Modal(document.getElementById('modal-delete'));
 
-  popularFiltros();
-  renderTable(funcionarios);
+  await carregar();
 
   const form = document.getElementById('filters');
   form.addEventListener('submit', (e) => { e.preventDefault(); filtrar(); });
@@ -29,11 +20,12 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('table-funcionarios').addEventListener('click', (e) => {
     const btn = e.target.closest('[data-action]');
     if (!btn) return;
-    const func = funcionarios.find((f) => f.id === Number(btn.dataset.id));
+    const func = funcionarios.find((f) => String(f.id) === btn.dataset.id);
     if (!func) return;
 
     if (btn.dataset.action === 'edit') {
-      localStorage.setItem('editingFuncionario', JSON.stringify(func));
+      // guardamos só o id: a página de edição busca os dados atuais na API
+      sessionStorage.setItem('editingFuncionarioId', String(func.id));
       location.href = 'funcionario-editar.html';
     }
     if (btn.dataset.action === 'delete') {
@@ -43,15 +35,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  document.getElementById('btn-confirm-delete').onclick = () => {
+  document.getElementById('btn-confirm-delete').onclick = async () => {
     if (deleteTargetId == null) return;
-    funcionarios = funcionarios.filter((f) => f.id !== deleteTargetId);
-    RH.saveStorage(STORAGE_KEY, funcionarios);
-    deleteTargetId = null;
-    deleteModal.hide();
-    filtrar();
+    const btn = document.getElementById('btn-confirm-delete');
+    btn.disabled = true;
+    try {
+      await API.funcionarios.deletar(deleteTargetId);
+      deleteTargetId = null;
+      deleteModal.hide();
+      await carregar();
+    } catch (err) {
+      deleteModal.hide();
+      alert(err.message || 'Não foi possível excluir o funcionário.');
+    } finally {
+      btn.disabled = false;
+    }
   };
 });
+
+async function carregar() {
+  funcionarios = await API.funcionarios.listar();
+  popularFiltros();
+  renderTable(funcionarios);
+}
 
 function renderTable(lista) {
   const tbody = document.querySelector('#table-funcionarios tbody');

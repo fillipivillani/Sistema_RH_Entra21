@@ -1,6 +1,5 @@
 const API = {
-  baseUrl: 'http://localhost:8080/api/v1',
-  useMock: true,
+  baseUrl: 'https://6a7b4c308c69b3eb4a180b43.mockapi.io/api/v1',
 
   async request(method, path, body) {
     const res = await fetch(`${this.baseUrl}${path}`, {
@@ -13,19 +12,18 @@ const API = {
   },
 
   departamentos: {
-    _mock: [
-      { id: 1, nome: 'Tecnologia da Informação', descricao: 'Desenvolvimento de sistemas', ativo: true },
-      { id: 2, nome: 'Recursos Humanos', descricao: 'Gestão de pessoal', ativo: true },
-      { id: 3, nome: 'Marketing', descricao: 'Divulgação de marca', ativo: true },
-    ],
-    listar() { return API.useMock ? [...this._mock] : API.request('GET', '/departamento/buscarTodos'); },
-    criar(dados) {
-      if (API.useMock) { const n = { id: Date.now(), ...dados, ativo: true }; this._mock.push(n); return n; }
-      return API.request('POST', '/departamento/criarDepartamento', dados);
-    },
-    deletar(id) {
-      if (API.useMock) { const i = this._mock.findIndex((d) => d.id === id); if (i >= 0) this._mock.splice(i, 1); return; }
-      return API.request('DELETE', `/departamento/deletarDepartamento/${id}`);
-    },
+    listar() { return API.request('GET', '/departamentos'); },
+    buscarPorId(id) { return API.request('GET', `/departamentos/${id}`); },
+    criar(dados) { return API.request('POST', '/departamentos', dados); },
+    atualizar(id, dados) { return API.request('PUT', `/departamentos/${id}`, dados); },
+    deletar(id) { return API.request('DELETE', `/departamentos/${id}`); },
+  },
+
+  funcionarios: {
+    listar() { return API.request('GET', '/funcionarios'); },
+    buscarPorId(id) { return API.request('GET', `/funcionarios/${id}`); },
+    criar(dados) { return API.request('POST', '/funcionarios', dados); },
+    atualizar(id, dados) { return API.request('PUT', `/funcionarios/${id}`, dados); },
+    deletar(id) { return API.request('DELETE', `/funcionarios/${id}`); },
   },
 };

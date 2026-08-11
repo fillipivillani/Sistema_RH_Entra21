@@ -2,7 +2,6 @@
 const FuncionarioForm = (() => {
   const DEPS = ['RH', 'TI', 'Marketing', 'Financeiro'];
   const CARGOS = ['Analista', 'Desenvolvedor', 'Designer', 'Gerente'];
-  const STORAGE_KEY = 'funcionariosData';
   const FORMACAO = [
     'escolaridade', 'instituicaoEscolaridade', 'situacaoEscolaridade', 'cursoSuperior',
     'faculdade', 'inicioSuperior', 'fimSuperior', 'cursoProfissionalizante',
@@ -234,23 +233,26 @@ const FuncionarioForm = (() => {
     FORMACAO.forEach((k) => { if ($(k)) $(k).value = obj.formacao?.[k] ?? ''; });
   }
 
-  function save(data, isEdit) {
-    const list = RH.loadStorage(STORAGE_KEY, []);
-    if (isEdit) {
-      const i = list.findIndex((x) => x.id === data.id);
-      if (i >= 0) list[i] = { ...list[i], ...data };
-      else list.push(data);
-      localStorage.removeItem('editingFuncionario');
-    } else {
-      data.id = list.length ? Math.max(...list.map((x) => x.id)) + 1 : 1;
-      list.push(data);
+  async function save(data, isEdit) {
+    const btn = $('btn-cadastrar') || document.querySelector('button[type="submit"]');
+    if (btn) btn.disabled = true;
+    try {
+      if (isEdit) {
+        await API.funcionarios.atualizar(data.id, data);
+        sessionStorage.removeItem('editingFuncionarioId');
+      } else {
+        await API.funcionarios.criar(data);
+      }
+      alert(isEdit ? 'Alterações salvas com sucesso.' : 'Funcionário salvo com sucesso.');
+      window.location.href = 'funcionarios.html';
+    } catch (err) {
+      alert(err.message || 'Não foi possível salvar o funcionário.');
+    } finally {
+      if (btn) btn.disabled = false;
     }
-    RH.saveStorage(STORAGE_KEY, list);
-    alert(isEdit ? 'Alterações salvas com sucesso.' : 'Funcionário salvo com sucesso.');
-    window.location.href = 'funcionarios.html';
   }
 
-  function init({ mode, formId }) {
+  async function init({ mode, formId }) {
     RH.fillSelect('dep', DEPS, null);
     RH.fillSelect('cargo', CARGOS, null);
     wirePhoto();
@@ -262,7 +264,8 @@ const FuncionarioForm = (() => {
     let funcionario = null;
 
     if (mode === 'editar') {
-      try { funcionario = JSON.parse(localStorage.getItem('editingFuncionario')); } catch { /* noop */ }
+      const id = sessionStorage.getItem('editingFuncionarioId');
+      funcionario = id ? await API.funcionarios.buscarPorId(id) : null;
       if (!funcionario) {
         alert('Nenhum funcionário selecionado para edição.');
         window.location.href = 'funcionarios.html';
@@ -281,7 +284,7 @@ const FuncionarioForm = (() => {
     const cancel = () => {
       if (mode === 'editar') {
         if (confirm('Cancelar edição e voltar para a lista?')) {
-          localStorage.removeItem('editingFuncionario');
+          sessionStorage.removeItem('editingFuncionarioId');
           window.location.href = 'funcionarios.html';
         }
       } else if (confirm('Cancelar cadastro e limpar o formulário?')) {
