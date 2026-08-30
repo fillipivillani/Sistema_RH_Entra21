@@ -1,0 +1,6 @@
+CREATE TABLE departamento (
+    id BIGSERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    descricao VARCHAR(500),
+    ativo BOOLEAN DEFAULT TRUE NOT NULL
+);

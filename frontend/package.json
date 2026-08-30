@@ -1,0 +1,13 @@
+{
+  "name": "sistema-rh-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Frontend estático do Sistema RH Entra21",
+  "scripts": {
+    "dev": "live-server --port=5500 --open=pages/dashboard.html --watch=.",
+    "start": "npm run dev"
+  },
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  }
+}

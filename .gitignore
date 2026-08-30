@@ -1,0 +1,17 @@
+# Build e dependências
+backend/target/
+backend/bin/
+frontend/node_modules/
+
+# IDE
+.idea/
+*.iml
+.vscode/settings.json
+
+# Ambiente
+.env
+*.log
+
+# SO
+.DS_Store
+Thumbs.db

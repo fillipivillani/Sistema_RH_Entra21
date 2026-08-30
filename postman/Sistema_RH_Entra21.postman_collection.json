@@ -1,0 +1,65 @@
+{
+  "info": {
+    "name": "Sistema RH Entra21",
+    "description": "Coleção de endpoints REST do Sistema RH",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080/api/v1"
+    }
+  ],
+  "item": [
+    {
+      "name": "Departamentos",
+      "item": [
+        {
+          "name": "Listar todos",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/departamento/buscarTodos"
+          }
+        },
+        {
+          "name": "Buscar por ID",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/departamento/buscarPorId/1"
+          }
+        },
+        {
+          "name": "Criar departamento",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Financeiro\",\n  \"descricao\": \"Gestão financeira\",\n  \"ativo\": true\n}"
+            },
+            "url": "{{baseUrl}}/departamento/criarDepartamento"
+          }
+        },
+        {
+          "name": "Editar departamento",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Financeiro\",\n  \"descricao\": \"Gestão financeira atualizada\",\n  \"ativo\": true\n}"
+            },
+            "url": "{{baseUrl}}/departamento/editarDepartamento/1"
+          }
+        },
+        {
+          "name": "Deletar departamento",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/departamento/deletarDepartamento/1"
+          }
+        }
+      ]
+    }
+  ]
+}

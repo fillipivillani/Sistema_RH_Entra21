@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard - Sistema RH</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../assets/css/navbar.css">
+  <link rel="stylesheet" href="../assets/css/dashboard.css">
+</head>
+
+<body>
+  <div id="site-navbar"></div>
+
+  <main class="container-fluid px-4 py-4">
+    <div class="page-header d-flex justify-content-between align-items-end flex-wrap gap-3 mb-4">
+      <div>
+        <span class="page-eyebrow">Recursos Humanos</span>
+        <h1 class="page-title mb-1">Dashboard</h1>
+        <p class="text-muted mb-0">Visão geral do sistema de Recursos Humanos</p>
+      </div>
+      <span class="date-badge">
+        <i class="bi bi-calendar3"></i> <span id="dataAtual"></span>
+      </span>
+    </div>
+
+    <!-- KPIs -->
+    <div class="row g-3 mb-4">
+      <div class="col-12 col-sm-6 col-xl">
+        <div class="card kpi-card accent-primary">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <p class="kpi-label">Total de Funcionários</p>
+                <h3 class="kpi-value" id="kpi-total-funcionarios">—</h3>
+                <span class="kpi-sub" id="kpi-total-funcionarios-sub"></span>
+              </div>
+              <div class="kpi-icon"><i class="bi bi-people"></i></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-6 col-xl">
+        <div class="card kpi-card accent-success">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <p class="kpi-label">Departamentos</p>
+                <h3 class="kpi-value" id="kpi-departamentos">—</h3>
+                <span class="kpi-sub">Em atividade</span>
+              </div>
+              <div class="kpi-icon"><i class="bi bi-building"></i></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-6 col-xl">
+        <div class="card kpi-card accent-warning">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <p class="kpi-label">Novas Contratações</p>
+                <h3 class="kpi-value" id="kpi-novas-contratacoes">—</h3>
+                <span class="kpi-sub" id="kpi-novas-contratacoes-sub">Neste mês</span>
+              </div>
+              <div class="kpi-icon"><i class="bi bi-person-plus"></i></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-6 col-xl">
+        <div class="card kpi-card accent-info">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <p class="kpi-label">Cargos Ativos</p>
+                <h3 class="kpi-value" id="kpi-cargos-ativos">—</h3>
+                <span class="kpi-sub" id="kpi-cargos-ativos-sub"></span>
+              </div>
+              <div class="kpi-icon"><i class="bi bi-briefcase"></i></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-6 col-xl">
+        <div class="card kpi-card accent-primary">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <p class="kpi-label">Colaboradores Ativos</p>
+                <h3 class="kpi-value" id="kpi-taxa-ativos">—</h3>
+                <span class="kpi-sub" id="kpi-taxa-ativos-sub"></span>
+              </div>
+              <div class="kpi-icon"><i class="bi bi-graph-up-arrow"></i></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Aniversariantes + Alertas -->
+    <div class="row g-4 mb-1">
+      <div class="col-12 col-lg-6">
+        <div class="card panel-card h-100">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="panel-title">
+              <i class="bi bi-cake2 text-warning-accent"></i>
+              Aniversariantes (<span id="mes-atual-label"></span>)
+            </h5>
+            <span class="badge-count warning" id="badge-aniversariantes">0 este mês</span>
+          </div>
+          <div class="card-body p-0">
+            <ul class="list-group list-group-flush" id="listaAniversariantes"></ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-6">
+        <div class="card panel-card h-100">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="panel-title">
+              <i class="bi bi-exclamation-triangle text-danger-accent"></i>
+              Período de Experiência a Vencer
+            </h5>
+            <span class="badge-count danger" id="badge-alertas">0 ações</span>
+          </div>
+          <div class="card-body p-0">
+            <div class="list-group list-group-flush" id="listaAlertasFerias"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gráfico + Tabela -->
+    <div class="row g-4 mt-1">
+      <div class="col-12 col-lg-6">
+        <div class="card panel-card h-100">
+          <div class="card-header">
+            <h5 class="panel-title">Funcionários por Departamento</h5>
+          </div>
+          <div class="card-body">
+            <canvas id="chartDepartamentos" height="240"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-6">
+        <div class="card panel-card h-100">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="panel-title">Últimas Contratações</h5>
+            <button class="btn btn-sm btn-link-soft" id="btn-ver-todos">Ver todos</button>
+          </div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-hover align-middle mb-0" id="table-recentes">
+                <thead>
+                  <tr>
+                    <th>Nome</th>
+                    <th>Cargo</th>
+                    <th>Departamento</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="tabelaRecentes"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <script src="../components/navbar.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script src="../assets/js/dashboard.js"></script>
+</body>
+
+</html>
