@@ -9,8 +9,11 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class DepartamentoDTO {
+public class CargoDTO {
     private String nome;
+    private String cboCodigo;
+    private String cboDescricao;
     private String descricao;
     private Boolean ativo;
+    private Long departamentoId;
 }
