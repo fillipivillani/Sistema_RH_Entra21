@@ -4,7 +4,7 @@
   "private": true,
   "description": "Frontend estático do Sistema RH Entra21",
   "scripts": {
-    "dev": "live-server --port=5500 --open=pages/dashboard.html --watch=.",
+    "dev": "live-server --port=5500 --open=pages/inicio.html --watch=.",
     "start": "npm run dev"
   },
   "devDependencies": {
