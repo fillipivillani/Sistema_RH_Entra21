@@ -2,6 +2,7 @@ package com.rh.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.rh.dto.CargoDTO;
@@ -12,13 +13,14 @@ import com.rh.model.Departamento;
 import com.rh.repository.CargoRepository;
 import com.rh.repository.DepartamentoRepository;
 
-import lombok.RequiredArgsConstructor;
-
 @Service
-@RequiredArgsConstructor
 public class CargoService {
-    private final CargoRepository cargoRepository;
-    private final DepartamentoRepository departamentoRepository;
+
+    @Autowired
+    private CargoRepository cargoRepository;
+    
+    @Autowired
+    private DepartamentoRepository departamentoRepository;
 
     public Cargo cadastrarCargo(CargoDTO dto) {
         Departamento departamento = departamentoRepository.findById(dto.getDepartamentoId())
