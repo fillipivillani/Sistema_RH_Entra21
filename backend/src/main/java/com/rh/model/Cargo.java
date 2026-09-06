@@ -1,6 +1,10 @@
 package com.rh.model;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,6 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -43,4 +48,21 @@ public class Cargo implements Serializable{
     @ManyToOne
     @JoinColumn(name = "departamento_id", nullable = false)
     private Departamento departamento;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "cargo")
+    private Set<Funcionario> funcionarios = new HashSet<>();
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Cargo)) return false;
+        Cargo cargo = (Cargo) o;
+        return id != null && id.equals(cargo.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

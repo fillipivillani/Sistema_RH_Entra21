@@ -2,6 +2,7 @@ package com.rh.controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,13 +18,12 @@ import com.rh.dto.DepartamentoDTO;
 import com.rh.model.Departamento;
 import com.rh.service.DepartamentoService;
 
-import lombok.RequiredArgsConstructor;
-
 @RestController
 @RequestMapping("/api/v1/departamento")
-@RequiredArgsConstructor
 public class DepartamentoController {
-    private final DepartamentoService departamentoService;
+
+    @Autowired
+    DepartamentoService departamentoService;
 
     @PostMapping("/criarDepartamento")
     public ResponseEntity<Departamento> cadastrarDepartamento(@RequestBody DepartamentoDTO dto) {

@@ -3,6 +3,7 @@ package com.rh.service;
 import java.util.List;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.rh.dto.DepartamentoDTO;
@@ -10,13 +11,11 @@ import com.rh.exception.DepartamentoNaoEncontradoException;
 import com.rh.model.Departamento;
 import com.rh.repository.DepartamentoRepository;
 
-import lombok.RequiredArgsConstructor;
-
 @Service
-@RequiredArgsConstructor
 public class DepartamentoService {
 
-    private final DepartamentoRepository departamentoRepository;
+    @Autowired
+    DepartamentoRepository departamentoRepository;
 
     public Departamento cadastrarDepartamento(DepartamentoDTO dto) {
         Departamento departamento = new Departamento();

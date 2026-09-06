@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,10 +17,13 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name = "departamentos")
 @Builder
 @AllArgsConstructor
@@ -37,8 +42,13 @@ public class Departamento implements Serializable {
     @Column(name = "ativo", nullable = false)
     private Boolean ativo;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "departamento", cascade = CascadeType.ALL)
     private Set<Cargo> cargos = new HashSet<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "departamento")
+    private Set<Funcionario> funcionarios = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {
