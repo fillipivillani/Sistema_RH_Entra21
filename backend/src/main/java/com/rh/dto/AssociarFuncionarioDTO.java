@@ -1,4 +1,4 @@
-package com.sistema.rh.dto;
+package com.rh.dto;
 
 public class AssociarFuncionarioDTO {
     private Long funcionarioId;

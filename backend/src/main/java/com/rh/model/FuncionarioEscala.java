@@ -1,34 +1,34 @@
-package com.sistema.rh.model;
+package com.rh.model;
+
+import java.io.Serializable;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@Getter 
+@Setter 
+@Builder 
 @Table(name = "funcionario_escala")
-public class FuncionarioEscala {
+@AllArgsConstructor 
+@NoArgsConstructor
+public class FuncionarioEscala implements Serializable{
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "funcionario_id")
-    private Long funcionarioId;
+    @ManyToOne
+    @JoinColumn(name = "funcionario_id", nullable = false)
+    private Funcionario funcionario;
 
-    @Column(name = "escala_id")
-    private Long escalaId;
-
-    public FuncionarioEscala() {}
-
-    public FuncionarioEscala(Long funcionarioId, Long escalaId) {
-        this.funcionarioId = funcionarioId;
-        this.escalaId = escalaId;
-    }
-
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public Long getFuncionarioId() { return funcionarioId; }
-    public void setFuncionarioId(Long funcionarioId) { this.funcionarioId = funcionarioId; }
-
-    public Long getEscalaId() { return escalaId; }
-    public void setEscalaId(Long escalaId) { this.escalaId = escalaId; }
+    @ManyToOne
+    @JoinColumn(name = "escala_id", nullable = false)
+    private Escala escala;
 }
