@@ -1,4 +1,4 @@
-package com.sistema.rh.dto;
+package com.rh.dto;
 
 import java.time.LocalTime;
 

@@ -6,6 +6,7 @@ import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -60,7 +61,6 @@ public class Funcionario implements Serializable {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal salario;
 
-    // Guarda apenas o nome ou o caminho do arquivo estático
     @Column(name = "foto", length = 255)
     private String foto;
 

@@ -1,13 +1,18 @@
-package com.sistema.rh.service;
+package com.rh.service;
 
-import com.sistema.rh.dto.AssociarFuncionarioDTO;
-import com.sistema.rh.dto.EscalaDTO;
-import com.sistema.rh.model.Escala;
-import com.sistema.rh.model.FuncionarioEscala;
-import com.sistema.rh.repository.EscalaRepository;
-import com.sistema.rh.repository.FuncionarioEscalaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.rh.dto.AssociarFuncionarioDTO;
+import com.rh.dto.EscalaDTO;
+import com.rh.exception.EscalaNaoEncontradaException;
+import com.rh.exception.FuncionarioNaoEncontradoException;
+import com.rh.model.Escala;
+import com.rh.model.Funcionario;
+import com.rh.model.FuncionarioEscala;
+import com.rh.repository.EscalaRepository;
+import com.rh.repository.FuncionarioEscalaRepository;
+import com.rh.repository.FuncionarioRepository;
 
 import java.util.List;
 
@@ -20,8 +25,18 @@ public class EscalaService {
     @Autowired
     private FuncionarioEscalaRepository funcionarioEscalaRepository;
 
+    @Autowired
+    private FuncionarioRepository funcionarioRepository;
+
     public Escala criarEscala(EscalaDTO dto) {
-        Escala escala = new Escala(dto.getNome(), dto.getDescricao(), dto.getHorarioInicio(), dto.getHorarioFim());
+        // Escala escala = new Escala(dto.getNome(), dto.getDescricao(), dto.getHorarioInicio(), dto.getHorarioFim());
+        Escala escala = Escala.builder()
+                .nome(dto.getNome())
+                .descricao(dto.getDescricao())
+                .horarioInicio(dto.getHorarioInicio())
+                .horarioFim(dto.getHorarioFim())
+                .build();
+                
         return escalaRepository.save(escala);
     }
 
@@ -30,7 +45,17 @@ public class EscalaService {
     }
 
     public FuncionarioEscala associarFuncionario(AssociarFuncionarioDTO dto) {
-        FuncionarioEscala associacao = new FuncionarioEscala(dto.getFuncionarioId(), dto.getEscalaId());
+        Funcionario funcionario = funcionarioRepository.findById(dto.getFuncionarioId())
+                            .orElseThrow(() -> new FuncionarioNaoEncontradoException(dto.getFuncionarioId()));
+
+        Escala escala = escalaRepository.findById(dto.getEscalaId())
+                            .orElseThrow(() -> new EscalaNaoEncontradaException(dto.getEscalaId()));
+
+        FuncionarioEscala associacao = FuncionarioEscala.builder()
+                                    .funcionario(funcionario)
+                                    .escala(escala)
+                                    .build();
+
         return funcionarioEscalaRepository.save(associacao);
     }
 }

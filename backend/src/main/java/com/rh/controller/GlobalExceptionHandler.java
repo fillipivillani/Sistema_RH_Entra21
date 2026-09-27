@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.rh.exception.CargoNaoEncontradoException;
 import com.rh.exception.DepartamentoNaoEncontradoException;
 import com.rh.exception.ErrorResponse;
+import com.rh.exception.EscalaNaoEncontradaException;
 import com.rh.exception.FuncionarioNaoEncontradoException;
 
 @RestControllerAdvice
@@ -27,6 +28,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(FuncionarioNaoEncontradoException.class)
     public ResponseEntity<ErrorResponse> handleFuncionarioNaoEncontradoException(FuncionarioNaoEncontradoException e) {
+        ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), HttpStatus.NOT_FOUND.value());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
+    @ExceptionHandler(EscalaNaoEncontradaException.class)
+    public ResponseEntity<ErrorResponse> handleEscalaNaoEcontradaException(EscalaNaoEncontradaException e) {
         ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), HttpStatus.NOT_FOUND.value());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
