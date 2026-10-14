@@ -36,7 +36,7 @@ Sistema_RH_Entra21/
 
 | Camada | Stack |
 |--------|-------|
-| Backend | Java 21, Spring Boot 3.2, JPA, PostgreSQL, Flyway, Lombok |
+| Backend | Java 25, Spring Boot 3.5, JPA, PostgreSQL, Flyway, Lombok |
 | Frontend | HTML5, CSS3, Bootstrap 5, JavaScript (vanilla) |
 | DevOps | Maven, Docker Compose, Postman |
 
@@ -44,7 +44,7 @@ Sistema_RH_Entra21/
 
 ### Pré-requisitos
 
-- Java 21+
+- Java 25+
 - Maven 3.8+
 - Node.js 18+ (servidor de desenvolvimento do frontend)
 - Docker (opcional, para o banco)
