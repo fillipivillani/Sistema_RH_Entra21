@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Movimentações · Sistema RH</title>
+  <script>try{document.documentElement.setAttribute('data-bs-theme',localStorage.getItem('rh-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))}catch(e){}</script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/app.css">
+</head>
+<body data-title="Movimentações">
+  <main class="app-content">
+    <div class="page-header">
+      <div>
+        <span class="page-eyebrow">Pessoas</span>
+        <h1 class="page-title">Movimentações</h1>
+        <p class="page-subtitle" id="summary">Carregando...</p>
+      </div>
+      <button class="btn btn-primary" id="btn-nova"><i class="bi bi-plus-lg"></i> Registrar movimentação</button>
+    </div>
+
+    <div class="row g-3 mb-4">
+      <div class="col-sm-4"><div class="kpi">
+        <div class="kpi-icon tone-success"><i class="bi bi-graph-up-arrow"></i></div>
+        <div class="kpi-label">Mudanças de cargo</div>
+        <div class="kpi-value" id="k-cargo">—</div>
+      </div></div>
+      <div class="col-sm-4"><div class="kpi">
+        <div class="kpi-icon tone-info"><i class="bi bi-arrow-left-right"></i></div>
+        <div class="kpi-label">Transferências</div>
+        <div class="kpi-value" id="k-dep">—</div>
+      </div></div>
+      <div class="col-sm-4"><div class="kpi">
+        <div class="kpi-icon tone-warning"><i class="bi bi-cash-coin"></i></div>
+        <div class="kpi-label">Reajustes salariais</div>
+        <div class="kpi-value" id="k-sal">—</div>
+      </div></div>
+    </div>
+
+    <div class="panel">
+      <form class="toolbar" id="filters" autocomplete="off">
+        <div class="input-icon search">
+          <i class="bi bi-search"></i>
+          <input type="search" class="form-control" id="f-busca" placeholder="Buscar por funcionário">
+        </div>
+        <select class="form-select" id="f-tipo" aria-label="Tipo">
+          <option value="">Todos os tipos</option>
+          <option value="cargo">Mudança de cargo</option>
+          <option value="dep">Transferência</option>
+          <option value="sal">Reajuste salarial</option>
+        </select>
+      </form>
+      <ul class="timeline" id="timeline"></ul>
+      <div id="estado"></div>
+    </div>
+  </main>
+
+  <div class="modal fade" id="modal-mov" tabindex="-1" aria-labelledby="modal-mov-title">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <form class="modal-content" id="form-mov" novalidate>
+        <div class="modal-header">
+          <h2 class="modal-title" id="modal-mov-title">Registrar movimentação</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label" for="mov-func">Funcionário <span class="req">*</span></label>
+            <select class="form-select" id="mov-func" name="funcionarioId" required></select>
+            <div class="invalid-feedback">Selecione um funcionário.</div>
+          </div>
+
+          <div class="panel p-3 mb-3" id="mov-atual" hidden style="background:var(--surface-2)">
+            <div class="small text-subtle fw-semibold text-uppercase mb-2">Situação atual</div>
+            <div class="d-flex flex-wrap gap-2" id="mov-atual-body"></div>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label" for="mov-dep">Novo departamento <span class="req">*</span></label>
+              <select class="form-select" id="mov-dep" name="novoDepartamentoId" required></select>
+              <div class="invalid-feedback">Selecione o departamento.</div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="mov-cargo">Novo cargo <span class="req">*</span></label>
+              <select class="form-select" id="mov-cargo" name="novoCargoId" required></select>
+              <div class="invalid-feedback">Selecione o cargo.</div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="mov-salario">Novo salário <span class="req">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text">R$</span>
+                <input type="number" class="form-control" id="mov-salario" name="novoSalario" min="0" step="0.01" required>
+                <div class="invalid-feedback">Informe o salário.</div>
+              </div>
+              <div class="form-text" id="mov-variacao"></div>
+            </div>
+            <div class="col-12">
+              <label class="form-label" for="mov-obs">Observação</label>
+              <textarea class="form-control" id="mov-obs" name="observacao" rows="3" maxlength="500" placeholder="Motivo da promoção, transferência ou reajuste"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-soft" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="btn-salvar"><i class="bi bi-check2"></i> Registrar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script src="../components/layout.js"></script>
+  <script src="../assets/js/movimentacoes.js"></script>
+</body>
+</html>

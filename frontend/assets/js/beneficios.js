@@ -1,233 +1,199 @@
-const STORAGE_KEY = 'beneficiosData';
-const PAGE_SIZE = 6;
-const DEPS = ['RH', 'TI', 'Marketing', 'Financeiro'];
-const TIPOS = ['Vale-Transporte', 'Vale-Refeição', 'Vale-Alimentação', 'Plano de Saúde', 'Plano Odontológico', 'Seguro de Vida', 'Convênio Farmácia', 'Auxílio Creche', 'Outros'];
-const SITUACAO = { ATIVO: { className: 'status-ativo', label: 'Ativo' }, SUSPENSO: { className: 'status-suspenso', label: 'Suspenso' }, ENCERRADO: { className: 'status-encerrado', label: 'Encerrado' } };
-const COLAB_FALLBACK = [
-  { matricula: '1001', nome: 'Ana Silva', departamento: 'RH', cargo: 'Analista' },
-  { matricula: '1002', nome: 'Bruno Costa', departamento: 'TI', cargo: 'Desenvolvedor' },
-  { matricula: '1003', nome: 'Carla Souza', departamento: 'Marketing', cargo: 'Designer' },
-];
-
-function getColaboradores() {
-  try {
-    const list = JSON.parse(localStorage.getItem('funcionariosData') || 'null');
-    if (Array.isArray(list) && list.length) {
-      return list.map((f, i) => ({
-        matricula: f.matricula || String(f.id ?? i + 1),
-        nome: f.nome || 'Sem nome',
-        departamento: f.departamento || '—',
-        cargo: f.cargo || '—',
-      }));
-    }
-  } catch { /* noop */ }
-  return COLAB_FALLBACK;
-}
-
-function loadBeneficios() {
-  try {
-    const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
-    if (Array.isArray(data)) return data;
-  } catch { /* noop */ }
-  const seed = seedBeneficios(getColaboradores());
-  RH.saveStorage(STORAGE_KEY, seed);
-  return seed;
-}
-
-function seedBeneficios(cols) {
-  const base = [
-    ['Vale-Refeição', 'Alelo', 660], ['Plano de Saúde', 'Unimed', 420], ['Vale-Transporte', 'Cittati', 220],
-    ['Seguro de Vida', 'Porto Seguro', 45], ['Vale-Alimentação', 'Sodexo', 780],
-  ];
-  return base.map(([tipo, operadora, valorMensal], i) => {
-    const col = cols[i % cols.length];
-    return { id: i + 1, colaboradorKey: col.matricula, colaborador: col.nome, matricula: col.matricula, departamento: col.departamento, cargo: col.cargo, tipo, operadora, valorMensal, percentualDesconto: 0, dataInicio: '2023-01-01', dataTermino: '', situacao: 'ATIVO', descricao: '', observacoes: '', dataCadastro: '2023-01-01', ultimaAtualizacao: '2023-01-01' };
-  });
-}
-
-let colaboradores = getColaboradores();
-let beneficios = loadBeneficios();
-let pagina = 1, deleteId = null, viewId = null, sortField = 'colaborador', sortDir = 'asc';
-
 document.addEventListener('DOMContentLoaded', () => {
-  const modal = new bootstrap.Modal(document.getElementById('modal-beneficio'));
-  const modalView = new bootstrap.Modal(document.getElementById('modal-visualizar'));
-  const modalDel = new bootstrap.Modal(document.getElementById('modal-delete'));
-  const form = document.getElementById('form-beneficio');
-  const title = document.getElementById('modal-beneficio-title');
-  const btnSave = document.getElementById('btn-salvar-beneficio');
-  const errEl = document.getElementById('form-erro');
+  const PAGE_SIZE = 10;
+  const TIPOS = [
+    { nome: 'Vale-Transporte', icon: 'bi-bus-front' },
+    { nome: 'Vale-Refeição', icon: 'bi-cup-hot' },
+    { nome: 'Vale-Alimentação', icon: 'bi-basket' },
+    { nome: 'Plano de Saúde', icon: 'bi-heart-pulse' },
+    { nome: 'Plano Odontológico', icon: 'bi-emoji-smile' },
+    { nome: 'Seguro de Vida', icon: 'bi-shield-check' },
+    { nome: 'Auxílio Creche', icon: 'bi-balloon' },
+    { nome: 'Gympass / Academia', icon: 'bi-bicycle' },
+    { nome: 'Outros', icon: 'bi-gift' },
+  ];
+  const SITUACAO = { ATIVO: ['Ativo', 'success'], SUSPENSO: ['Suspenso', 'warning'], ENCERRADO: ['Encerrado', 'danger'] };
 
-  DEPS.forEach((d) => RH.appendSelect('filter-departamento', [d]));
-  TIPOS.forEach((t) => RH.appendSelect('filter-tipo', [t]));
-  const selCol = document.getElementById('input-colaborador');
-  selCol.innerHTML = '<option value="">Selecione</option>';
-  colaboradores.forEach((c) => {
-    const o = document.createElement('option');
-    o.value = c.matricula; o.textContent = `${c.nome} (${c.matricula})`;
-    selCol.appendChild(o);
-  });
+  const $ = (id) => document.getElementById(id);
+  const tbody = document.querySelector('#tabela tbody');
+  const estado = $('estado');
+  const form = $('form-ben');
+  const modal = new bootstrap.Modal($('modal-ben'));
 
-  render();
+  let beneficios = [];
+  let funcionarios = [];
+  let pagina = 1;
 
-  document.getElementById('input-colaborador').onchange = (e) => {
-    const col = colaboradores.find((c) => c.matricula === e.target.value);
-    document.getElementById('input-matricula').value = col?.matricula || '';
-    document.getElementById('input-departamento').value = col?.departamento || '';
-    document.getElementById('input-cargo').value = col?.cargo || '';
-  };
+  const funcId = (b) => b.funcionario?.id ?? b.funcionarioId;
+  const funcDe = (b) => b.funcionario || funcionarios.find((f) => f.id === funcId(b));
 
-  document.getElementById('btn-novo-beneficio').onclick = () => { resetForm(); title.textContent = 'Novo Benefício'; btnSave.textContent = 'Salvar'; modal.show(); };
-  document.getElementById('filters').onsubmit = (e) => e.preventDefault();
-  document.getElementById('filter-busca').oninput = RH.debounce(() => { pagina = 1; render(); });
-  ['filter-departamento', 'filter-tipo', 'filter-situacao'].forEach((id) => document.getElementById(id).onchange = () => { pagina = 1; render(); });
-  document.getElementById('btn-clear').onclick = () => { document.getElementById('filters').reset(); pagina = 1; render(); };
+  RH.fillSelect('f-tipo', TIPOS, { value: 'nome', first: 'Todos os tipos' });
+  RH.fillSelect('ben-tipo', TIPOS, { value: 'nome' });
 
-  document.querySelectorAll('#table-beneficios thead th.sortable').forEach((th) => {
-    th.onclick = () => {
-      const f = th.dataset.sort;
-      sortDir = sortField === f ? (sortDir === 'asc' ? 'desc' : 'asc') : 'asc';
-      sortField = f;
+  async function carregar() {
+    tbody.innerHTML = RH.skeletonRows(7);
+    estado.innerHTML = '';
+    $('summary').textContent = 'Carregando...';
+    try {
+      const [bens, funcs] = await Promise.all([API.beneficios.listar(), API.funcionarios.listar().catch(() => [])]);
+      beneficios = bens || [];
+      funcionarios = (funcs || []).sort(RH.byText('nome'));
       render();
-    };
-  });
-
-  document.getElementById('table-beneficios').onclick = (e) => {
-    const btn = e.target.closest('[data-action]');
-    if (!btn) return;
-    const b = beneficios.find((x) => x.id === Number(btn.dataset.id));
-    if (!b) return;
-    if (btn.dataset.action === 'visualizar') { fillView(b); modalView.show(); }
-    if (btn.dataset.action === 'editar') { fillForm(b); title.textContent = 'Editar Benefício'; btnSave.textContent = 'Salvar alterações'; modal.show(); }
-    if (btn.dataset.action === 'deletar') { deleteId = b.id; document.getElementById('modal-delete-name').textContent = `${b.tipo} — ${b.colaborador}`; modalDel.show(); }
-  };
-
-  document.getElementById('btn-editar-do-view').onclick = () => {
-    const b = beneficios.find((x) => x.id === viewId);
-    modalView.hide();
-    if (!b) return;
-    fillForm(b); title.textContent = 'Editar Benefício'; btnSave.textContent = 'Salvar alterações'; modal.show();
-  };
-
-  document.getElementById('btn-confirm-delete').onclick = () => {
-    if (deleteId == null) return;
-    const b = beneficios.find((x) => x.id === deleteId);
-    beneficios = beneficios.filter((x) => x.id !== deleteId);
-    RH.saveStorage(STORAGE_KEY, beneficios);
-    modalDel.hide(); deleteId = null;
-    RH.alert('success', `Benefício removido de ${b?.colaborador || ''}.`);
-    if (pagina > 1 && (pagina - 1) * PAGE_SIZE >= filtrados().length) pagina -= 1;
-    render();
-  };
-
-  form.onsubmit = (e) => {
-    e.preventDefault();
-    errEl.hidden = true;
-    const col = colaboradores.find((c) => c.matricula === form.colaboradorKey.value);
-    const dados = {
-      colaboradorKey: form.colaboradorKey.value, colaborador: col?.nome || '', matricula: col?.matricula || '',
-      departamento: col?.departamento || '', cargo: col?.cargo || '', tipo: form.tipo.value,
-      operadora: form.operadora.value.trim(), descricao: form.descricao.value.trim(),
-      valorMensal: parseFloat(form.valorMensal.value), percentualDesconto: parseFloat(form.percentualDesconto.value) || 0,
-      dataInicio: form.dataInicio.value, dataTermino: form.dataTermino.value || '',
-      situacao: form.situacao.value || 'ATIVO', observacoes: form.observacoes.value.trim(),
-    };
-    const mark = (id, cond) => { document.getElementById(id).classList.toggle('is-invalid', cond); return cond; };
-    let bad = mark('input-colaborador', !dados.colaboradorKey) || mark('input-tipo', !dados.tipo)
-      || mark('input-valorMensal', !(dados.valorMensal >= 0)) || mark('input-dataInicio', !dados.dataInicio)
-      || mark('input-dataTermino', !!(dados.dataTermino && dados.dataTermino < dados.dataInicio));
-    if (bad) { form.classList.add('was-validated'); errEl.textContent = 'Revise os campos destacados.'; errEl.hidden = false; return; }
-
-    const hoje = new Date().toISOString().slice(0, 10);
-    const id = form.id.value ? Number(form.id.value) : null;
-    if (id) {
-      const i = beneficios.findIndex((b) => b.id === id);
-      if (i >= 0) beneficios[i] = { ...beneficios[i], ...dados, ultimaAtualizacao: hoje };
-      RH.alert('success', `Benefício de ${dados.colaborador} atualizado.`);
-    } else {
-      beneficios.push({ id: beneficios.length ? Math.max(...beneficios.map((b) => b.id)) + 1 : 1, ...dados, dataCadastro: hoje, ultimaAtualizacao: hoje });
-      RH.alert('success', `Benefício cadastrado para ${dados.colaborador}.`);
+    } catch (err) {
+      tbody.innerHTML = '';
+      $('summary').textContent = '';
+      estado.innerHTML = err.status === 404
+        ? RH.stateHtml({ icon: 'bi-cone-striped', title: 'Módulo aguardando o backend', text: 'Os endpoints de benefícios (/api/v1/beneficio) ainda não foram implementados na API.' })
+        : RH.errorState(err.message);
+      $('btn-retry')?.addEventListener('click', carregar);
     }
-    RH.saveStorage(STORAGE_KEY, beneficios);
-    modal.hide(); resetForm(); pagina = 1; render();
-  };
-
-  function resetForm() {
-    form.reset(); form.classList.remove('was-validated'); form.id.value = ''; form.situacao.value = 'ATIVO';
-    ['input-matricula', 'input-departamento', 'input-cargo'].forEach((id) => { document.getElementById(id).value = ''; });
-    errEl.hidden = true;
-    ['input-colaborador', 'input-tipo', 'input-valorMensal', 'input-dataInicio', 'input-dataTermino'].forEach((id) => document.getElementById(id).classList.remove('is-invalid'));
-  }
-
-  function fillForm(b) {
-    resetForm(); form.id.value = b.id; form.colaboradorKey.value = b.colaboradorKey;
-    document.getElementById('input-matricula').value = b.matricula || '';
-    document.getElementById('input-departamento').value = b.departamento || '';
-    document.getElementById('input-cargo').value = b.cargo || '';
-    ['tipo', 'operadora', 'descricao', 'valorMensal', 'percentualDesconto', 'dataInicio', 'dataTermino', 'situacao', 'observacoes']
-      .forEach((k) => { if (form[k]) form[k].value = b[k] ?? ''; });
-  }
-
-  function fillView(b) {
-    viewId = b.id;
-    document.getElementById('view-tipo').textContent = b.tipo;
-    document.getElementById('view-colaborador').textContent = `${b.colaborador} — ${b.cargo || ''}`;
-    document.getElementById('view-matricula').textContent = b.matricula || '—';
-    document.getElementById('view-departamento').textContent = b.departamento || '—';
-    document.getElementById('view-cargo').textContent = b.cargo || '—';
-    document.getElementById('view-situacao').innerHTML = RH.statusBadge(b.situacao, SITUACAO);
-    document.getElementById('view-operadora').textContent = b.operadora || '—';
-    document.getElementById('view-valor').textContent = RH.formatCurrency(b.valorMensal);
-    document.getElementById('view-desconto').textContent = b.percentualDesconto ? `${b.percentualDesconto}%` : 'Não aplicável';
-    document.getElementById('view-dataInicio').textContent = RH.formatDate(b.dataInicio);
-    document.getElementById('view-dataTermino').textContent = b.dataTermino ? RH.formatDate(b.dataTermino) : 'Indeterminado';
-    document.getElementById('view-criado').textContent = RH.formatDate(b.dataCadastro);
-    document.getElementById('view-atualizado').textContent = RH.formatDate(b.ultimaAtualizacao);
-    document.getElementById('view-descricao').textContent = b.descricao || 'Sem descrição cadastrada.';
-    document.getElementById('view-observacoes').textContent = b.observacoes || 'Sem observações.';
-  }
-
-  function filtrados() {
-    const busca = document.getElementById('filter-busca').value.trim().toLowerCase();
-    const dep = document.getElementById('filter-departamento').value;
-    const tipo = document.getElementById('filter-tipo').value;
-    const situacao = document.getElementById('filter-situacao').value;
-    return beneficios.filter((b) =>
-      (!busca || [b.colaborador, b.matricula, b.tipo].some((v) => (v || '').toLowerCase().includes(busca))) &&
-      (!dep || b.departamento === dep) && (!tipo || b.tipo === tipo) && (!situacao || b.situacao === situacao)
-    ).sort((a, b) => {
-      let va = a[sortField], vb = b[sortField];
-      if (sortField === 'colaborador') { va = (va || '').toLowerCase(); vb = (vb || '').toLowerCase(); }
-      return va < vb ? (sortDir === 'asc' ? -1 : 1) : va > vb ? (sortDir === 'asc' ? 1 : -1) : 0;
-    });
   }
 
   function render() {
-    const lista = filtrados();
-    const totalPages = Math.max(1, Math.ceil(lista.length / PAGE_SIZE));
-    if (pagina > totalPages) pagina = totalPages;
-    RH.renderPagination({ navId: 'pagination', infoId: 'pagination-info', page: pagina, pageSize: PAGE_SIZE, total: lista.length, onPage: (p) => { pagina = p; render(); } });
+    const ativos = beneficios.filter((b) => (b.situacao || 'ATIVO') === 'ATIVO');
+    $('k-ativos').textContent = ativos.length;
+    $('k-custo').textContent = RH.formatCurrency(ativos.reduce((s, b) => s + (Number(b.valorMensal) || 0), 0));
+    $('k-func').textContent = new Set(ativos.map(funcId)).size;
 
-    document.getElementById('results-summary').textContent = lista.length === beneficios.length
-      ? `${beneficios.length} benefício${beneficios.length === 1 ? '' : 's'} concedido${beneficios.length === 1 ? '' : 's'}`
+    const busca = RH.normalize($('f-busca').value.trim());
+    const tipo = $('f-tipo').value;
+    const sit = $('f-situacao').value;
+    const lista = beneficios.filter((b) =>
+      (!busca || RH.normalize(funcDe(b)?.nome).includes(busca) || RH.normalize(b.operadora).includes(busca)) &&
+      (!tipo || b.tipo === tipo) &&
+      (!sit || (b.situacao || 'ATIVO') === sit))
+      .sort((a, b) => RH.normalize(funcDe(a)?.nome).localeCompare(RH.normalize(funcDe(b)?.nome)));
+
+    $('summary').textContent = lista.length === beneficios.length
+      ? RH.plural(beneficios.length, 'benefício concedido', 'benefícios concedidos')
       : `${lista.length} de ${beneficios.length} benefícios`;
 
-    const slice = lista.slice((pagina - 1) * PAGE_SIZE, pagina * PAGE_SIZE);
-    const tbody = document.querySelector('#table-beneficios tbody');
-    if (!slice.length) {
-      tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">🎁</div><strong>Nenhum benefício encontrado</strong><span>Ajuste os filtros ou cadastre um novo benefício.</span></div></td></tr>`;
+    if (!lista.length) {
+      tbody.innerHTML = '';
+      estado.innerHTML = beneficios.length
+        ? RH.stateHtml({ icon: 'bi-search', title: 'Nenhum resultado', text: 'Ajuste os filtros.' })
+        : RH.stateHtml({ icon: 'bi-gift', title: 'Nenhum benefício concedido', text: 'Registre vales, planos e auxílios dos funcionários.', action: '<button class="btn btn-primary" data-novo><i class="bi bi-plus-lg"></i> Novo benefício</button>' });
+      estado.querySelector('[data-novo]')?.addEventListener('click', () => abrir());
+      RH.renderPagination($('pagination'), $('page-info'), { total: 0 });
       return;
     }
-    tbody.innerHTML = slice.map((b) => `<tr>
-      <td class="matricula-code">${RH.escapeHtml(b.matricula)}</td>
-      <td><span class="colaborador-name">${RH.escapeHtml(b.colaborador)}</span><span class="colaborador-cargo">${RH.escapeHtml(b.cargo || '')}</span></td>
-      <td>${RH.escapeHtml(b.departamento)}</td><td><span class="type-badge">${RH.escapeHtml(b.tipo)}</span></td>
-      <td class="valor-mensal">${RH.formatCurrency(b.valorMensal)}</td>
-      <td>${RH.statusBadge(b.situacao, SITUACAO)}</td><td>${RH.formatDate(b.dataInicio)}</td>
-      <td class="text-end actions">
-        <button class="btn btn-sm btn-outline-secondary btn-icon-only" data-action="visualizar" data-id="${b.id}"><i class="bi bi-eye"></i></button>
-        <button class="btn btn-sm btn-outline-secondary btn-icon-only" data-action="editar" data-id="${b.id}"><i class="bi bi-pencil"></i></button>
-        <button class="btn btn-sm btn-outline-danger btn-icon-only" data-action="deletar" data-id="${b.id}"><i class="bi bi-trash"></i></button>
-      </td></tr>`).join('');
+
+    estado.innerHTML = '';
+    const pg = RH.paginate(lista, pagina, PAGE_SIZE);
+    pagina = pg.page;
+    tbody.innerHTML = pg.items.map((b) => {
+      const f = funcDe(b);
+      const t = TIPOS.find((x) => x.nome === b.tipo) || TIPOS[TIPOS.length - 1];
+      const [sLabel, sTone] = SITUACAO[b.situacao] || SITUACAO.ATIVO;
+      return `<tr class="fade-in">
+        <td><div class="cell-person">${RH.avatar(f?.nome, f?.foto)}
+          <div><div class="name">${RH.escapeHtml(f?.nome || 'Funcionário removido')}</div><div class="meta">${RH.escapeHtml(f?.departamento?.nome || '—')}</div></div></div></td>
+        <td><div class="d-flex align-items-center gap-2"><i class="bi ${t.icon} text-primary"></i>
+          <div><div class="fw-semibold">${RH.escapeHtml(b.tipo || '—')}</div><div class="small text-muted">${RH.escapeHtml(b.operadora || '')}</div></div></div></td>
+        <td class="text-end text-nowrap">${RH.formatCurrency(b.valorMensal)}</td>
+        <td class="text-end">${Number(b.percentualDesconto) ? `${Number(b.percentualDesconto).toLocaleString('pt-BR')}%` : '—'}</td>
+        <td class="text-nowrap small">${RH.formatDate(b.dataInicio)}${b.dataTermino ? ` – ${RH.formatDate(b.dataTermino)}` : ' – atual'}</td>
+        <td>${RH.badge(sLabel, sTone)}</td>
+        <td class="text-end"><div class="row-actions">
+          <button class="btn btn-icon" data-action="editar" data-id="${b.id}" title="Editar"><i class="bi bi-pencil"></i></button>
+          <button class="btn btn-icon danger" data-action="excluir" data-id="${b.id}" title="Excluir"><i class="bi bi-trash3"></i></button>
+        </div></td>
+      </tr>`;
+    }).join('');
+
+    RH.renderPagination($('pagination'), $('page-info'), {
+      page: pg.page, pages: pg.pages, total: lista.length, size: PAGE_SIZE,
+      onPage: (p) => { pagina = p; render(); },
+    });
   }
+
+  function abrir(b) {
+    if (!funcionarios.length) return RH.error('Cadastre funcionários antes de conceder benefícios.');
+    RH.resetForm(form);
+    RH.fillSelect('ben-func', funcionarios, { label: (f) => `${f.nome} — ${f.departamento?.nome || ''}`, selected: b ? funcId(b) : null });
+    form.editId.value = b?.id ?? '';
+    if (b) {
+      form.tipo.value = b.tipo || '';
+      form.operadora.value = b.operadora || '';
+      form.valorMensal.value = b.valorMensal ?? '';
+      form.percentualDesconto.value = b.percentualDesconto ?? 0;
+      form.dataInicio.value = b.dataInicio || '';
+      form.dataTermino.value = b.dataTermino || '';
+      form.situacao.value = b.situacao || 'ATIVO';
+      form.observacoes.value = b.observacoes || '';
+    } else {
+      form.dataInicio.value = new Date().toISOString().slice(0, 10);
+    }
+    $('modal-ben-title').textContent = b ? 'Editar benefício' : 'Novo benefício';
+    modal.show();
+  }
+
+  $('btn-novo').addEventListener('click', () => abrir());
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    RH.formError(form, null);
+    const dados = {
+      funcionarioId: Number(form.funcionarioId.value) || null,
+      tipo: form.tipo.value,
+      operadora: form.operadora.value.trim() || null,
+      valorMensal: Number(form.valorMensal.value),
+      percentualDesconto: Number(form.percentualDesconto.value) || 0,
+      dataInicio: form.dataInicio.value,
+      dataTermino: form.dataTermino.value || null,
+      situacao: form.situacao.value,
+      observacoes: form.observacoes.value.trim() || null,
+    };
+    const regras = [
+      ['funcionarioId', !dados.funcionarioId],
+      ['tipo', !dados.tipo],
+      ['valorMensal', !(dados.valorMensal >= 0) || form.valorMensal.value === ''],
+      ['dataInicio', !dados.dataInicio],
+      ['dataTermino', dados.dataTermino && dados.dataTermino < dados.dataInicio],
+    ];
+    regras.forEach(([k, inv]) => form[k].classList.toggle('is-invalid', !!inv));
+    if (regras.some(([, inv]) => inv)) return;
+
+    const id = form.editId.value;
+    const btn = $('btn-salvar');
+    RH.busy(btn, true);
+    try {
+      if (id) await API.beneficios.atualizar(id, dados);
+      else await API.beneficios.criar(dados);
+      modal.hide();
+      RH.success(id ? 'Benefício atualizado.' : 'Benefício concedido.');
+      await carregar();
+    } catch (err) {
+      RH.formError(form, err.message);
+    } finally {
+      RH.busy(btn, false);
+    }
+  });
+
+  tbody.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-action]');
+    if (!btn) return;
+    const b = beneficios.find((x) => String(x.id) === btn.dataset.id);
+    if (!b) return;
+    if (btn.dataset.action === 'editar') abrir(b);
+    if (btn.dataset.action === 'excluir') {
+      RH.confirm({
+        title: 'Excluir benefício',
+        message: `Excluir <strong>${RH.escapeHtml(b.tipo)}</strong> de <strong>${RH.escapeHtml(funcDe(b)?.nome || 'funcionário')}</strong>?`,
+        onConfirm: () => API.beneficios.deletar(b.id),
+      }).then((ok) => {
+        if (!ok) return;
+        beneficios = beneficios.filter((x) => x.id !== b.id);
+        render();
+        RH.success('Benefício excluído.');
+      });
+    }
+  });
+
+  const refiltrar = () => { pagina = 1; render(); };
+  $('f-busca').addEventListener('input', RH.debounce(refiltrar, 200));
+  ['f-tipo', 'f-situacao'].forEach((id) => $(id).addEventListener('change', refiltrar));
+  $('filters').addEventListener('submit', (e) => e.preventDefault());
+  $('filters').addEventListener('reset', () => setTimeout(refiltrar));
+
+  carregar();
 });

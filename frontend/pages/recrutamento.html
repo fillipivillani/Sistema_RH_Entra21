@@ -1,244 +1,181 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Recrutamento & Seleção - Sistema RH</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Recrutamento · Sistema RH</title>
+  <script>try{document.documentElement.setAttribute('data-bs-theme',localStorage.getItem('rh-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))}catch(e){}</script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../assets/css/navbar.css">
-  <link rel="stylesheet" href="../assets/css/recrutamento.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/app.css">
 </head>
-<body>
-  <div id="site-navbar"></div>
-
-  <main class="container-fluid my-4">
-
-    <div id="alert-stack" class="alert-stack"></div>
-
-    <!-- ===================== VISÃO 1: LISTA DE VAGAS ===================== -->
+<body data-title="Recrutamento">
+  <main class="app-content">
+    <!-- Visão: lista de vagas -->
     <section id="view-vagas">
-      <div class="page-header d-flex justify-content-between align-items-end flex-wrap gap-3 mb-4">
+      <div class="page-header">
         <div>
-          <span class="page-eyebrow">Recursos Humanos</span>
-          <h1 class="page-title mb-1">Recrutamento & Seleção</h1>
-          <p class="text-muted mb-0" id="vagas-summary">Carregando...</p>
+          <span class="page-eyebrow">Pessoas</span>
+          <h1 class="page-title">Recrutamento</h1>
+          <p class="page-subtitle" id="summary">Carregando...</p>
         </div>
-        <button class="btn btn-primary" id="btn-nova-vaga">
-          <i class="bi bi-plus-lg"></i> Nova Vaga
-        </button>
+        <button class="btn btn-primary" id="btn-nova-vaga"><i class="bi bi-plus-lg"></i> Nova vaga</button>
       </div>
 
-      <div class="card filter-card mb-3">
-        <div class="card-body">
-          <form id="filters-vagas" class="row g-3">
-            <div class="col-md-5">
-              <label class="form-label" for="filter-busca">Buscar</label>
-              <div class="search-input">
-                <i class="bi bi-search"></i>
-                <input type="text" class="form-control" id="filter-busca" placeholder="Cargo, título ou departamento" autocomplete="off">
-              </div>
-            </div>
-            <div class="col-md-3">
-              <label class="form-label" for="filter-departamento">Departamento</label>
-              <select id="filter-departamento" class="form-select"><option value="">Todos</option></select>
-            </div>
-            <div class="col-md-3">
-              <label class="form-label" for="filter-status">Status</label>
-              <select id="filter-status" class="form-select">
-                <option value="">Todos</option>
-                <option value="ABERTA">Aberta</option>
-                <option value="PAUSADA">Pausada</option>
-                <option value="ENCERRADA">Encerrada</option>
-              </select>
-            </div>
-            <div class="col-md-1 d-flex align-items-end">
-              <button type="button" id="btn-clear-vagas" class="btn btn-outline-secondary w-100" title="Limpar filtros">
-                <i class="bi bi-x-lg"></i>
-              </button>
-            </div>
-          </form>
-        </div>
+      <div class="panel mb-4">
+        <form class="toolbar border-0" id="filters" autocomplete="off">
+          <div class="input-icon search">
+            <i class="bi bi-search"></i>
+            <input type="search" class="form-control" id="f-busca" placeholder="Buscar vaga">
+          </div>
+          <select class="form-select" id="f-dep" aria-label="Departamento"><option value="">Todos os departamentos</option></select>
+          <select class="form-select" id="f-status" aria-label="Status">
+            <option value="">Todos os status</option>
+            <option value="ABERTA">Abertas</option>
+            <option value="PAUSADA">Pausadas</option>
+            <option value="FECHADA">Fechadas</option>
+          </select>
+        </form>
       </div>
 
-      <div id="vagas-grid" class="row g-4"></div>
+      <div class="row g-4" id="grid"></div>
+      <div id="estado"></div>
     </section>
 
-    <!-- ===================== VISÃO 2: KANBAN DE UMA VAGA ===================== -->
+    <!-- Visão: kanban da vaga -->
     <section id="view-kanban" hidden>
-      <button class="btn btn-ghost mb-3" id="btn-voltar-vagas">
-        <i class="bi bi-arrow-left"></i> Todas as vagas
-      </button>
-
-      <div class="page-header d-flex justify-content-between align-items-end flex-wrap gap-3 mb-4">
+      <div class="page-header">
         <div>
-          <span class="page-eyebrow" id="kanban-departamento">Departamento</span>
-          <h1 class="page-title mb-1" id="kanban-titulo">Vaga</h1>
-          <p class="text-muted mb-0" id="kanban-summary"></p>
+          <button class="btn btn-ghost btn-sm mb-2 px-0" id="btn-voltar"><i class="bi bi-arrow-left"></i> Todas as vagas</button>
+          <h1 class="page-title" id="vaga-titulo"></h1>
+          <p class="page-subtitle" id="vaga-sub"></p>
         </div>
-        <div class="d-flex gap-2">
-          <button class="btn btn-outline-secondary" id="btn-editar-vaga">
-            <i class="bi bi-pencil"></i> Editar Vaga
-          </button>
-          <button class="btn btn-primary" id="btn-novo-candidato">
-            <i class="bi bi-person-plus"></i> Novo Candidato
-          </button>
+        <div class="d-flex gap-2 flex-wrap">
+          <button class="btn btn-soft" id="btn-editar-vaga"><i class="bi bi-pencil"></i> Editar vaga</button>
+          <button class="btn btn-danger-soft" id="btn-excluir-vaga"><i class="bi bi-trash3"></i> Excluir</button>
+          <button class="btn btn-primary" id="btn-novo-cand"><i class="bi bi-person-plus"></i> Candidato</button>
         </div>
       </div>
-
-      <div class="kanban-board" id="kanban-board"></div>
+      <div class="kanban" id="kanban"></div>
     </section>
   </main>
 
-  <!-- MODAL VAGA (criar / editar) -->
-  <div class="modal fade" id="modal-vaga" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <form id="form-vaga" class="modal-content" novalidate>
+  <div class="modal fade" id="modal-vaga" tabindex="-1" aria-labelledby="modal-vaga-title">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <form class="modal-content" id="form-vaga" novalidate>
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="modal-vaga-title">Nova Vaga</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          <h2 class="modal-title" id="modal-vaga-title">Nova vaga</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
         </div>
         <div class="modal-body">
-          <div id="form-vaga-erro" class="form-erro" hidden></div>
-          <input type="hidden" name="id">
+          <input type="hidden" name="editId">
           <div class="row g-3">
-            <div class="col-12">
-              <label class="form-label" for="input-vaga-titulo">Título da Vaga <span class="text-danger">*</span></label>
-              <input type="text" id="input-vaga-titulo" name="titulo" class="form-control" maxlength="80" required>
+            <div class="col-md-8">
+              <label class="form-label" for="vaga-titulo-in">Título <span class="req">*</span></label>
+              <input type="text" class="form-control" id="vaga-titulo-in" name="titulo" maxlength="120" required>
               <div class="invalid-feedback">Informe o título da vaga.</div>
             </div>
-            <div class="col-md-6">
-              <label class="form-label" for="input-vaga-departamento">Departamento <span class="text-danger">*</span></label>
-              <select id="input-vaga-departamento" name="departamento" class="form-select" required>
-                <option value="">Selecione</option>
-              </select>
-              <div class="invalid-feedback">Selecione um departamento.</div>
+            <div class="col-md-4">
+              <label class="form-label" for="vaga-posicoes">Posições</label>
+              <input type="number" class="form-control" id="vaga-posicoes" name="numeroPosicoes" min="1" value="1">
             </div>
-            <div class="col-md-6">
-              <label class="form-label" for="input-vaga-prioridade">Prioridade</label>
-              <select id="input-vaga-prioridade" name="prioridade" class="form-select">
-                <option>Baixa</option>
-                <option selected>Média</option>
-                <option>Alta</option>
+            <div class="col-md-4">
+              <label class="form-label" for="vaga-dep">Departamento <span class="req">*</span></label>
+              <select class="form-select" id="vaga-dep" name="departamentoId" required></select>
+              <div class="invalid-feedback">Selecione o departamento.</div>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label" for="vaga-prioridade">Prioridade</label>
+              <select class="form-select" id="vaga-prioridade" name="prioridade">
+                <option value="BAIXA">Baixa</option>
+                <option value="MEDIA" selected>Média</option>
+                <option value="ALTA">Alta</option>
               </select>
             </div>
-            <div class="col-md-6">
-              <label class="form-label" for="input-vaga-status">Status</label>
-              <select id="input-vaga-status" name="status" class="form-select">
+            <div class="col-md-4">
+              <label class="form-label" for="vaga-status">Status</label>
+              <select class="form-select" id="vaga-status" name="status">
                 <option value="ABERTA">Aberta</option>
                 <option value="PAUSADA">Pausada</option>
-                <option value="ENCERRADA">Encerrada</option>
+                <option value="FECHADA">Fechada</option>
               </select>
             </div>
-            <div class="col-md-6">
-              <label class="form-label" for="input-vaga-vagas">Nº de Posições</label>
-              <input type="number" id="input-vaga-vagas" name="numeroPosicoes" class="form-control" min="1" value="1">
-            </div>
             <div class="col-12">
-              <label class="form-label" for="input-vaga-descricao">Descrição</label>
-              <textarea id="input-vaga-descricao" name="descricao" class="form-control" rows="3" maxlength="400"></textarea>
+              <label class="form-label" for="vaga-desc">Descrição</label>
+              <textarea class="form-control" id="vaga-desc" name="descricao" rows="4" maxlength="1000"></textarea>
             </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-ghost" data-bs-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn-primary" id="btn-salvar-vaga">Salvar</button>
+          <button type="button" class="btn btn-soft" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="btn-salvar-vaga"><i class="bi bi-check2"></i> Salvar</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- MODAL CANDIDATO (criar / editar) -->
-  <div class="modal fade" id="modal-candidato" tabindex="-1" aria-hidden="true">
+  <div class="modal fade" id="modal-cand" tabindex="-1" aria-labelledby="modal-cand-title">
     <div class="modal-dialog modal-dialog-centered">
-      <form id="form-candidato" class="modal-content" novalidate>
+      <form class="modal-content" id="form-cand" novalidate>
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="modal-candidato-title">Novo Candidato</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          <h2 class="modal-title" id="modal-cand-title">Novo candidato</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
         </div>
         <div class="modal-body">
-          <div id="form-candidato-erro" class="form-erro" hidden></div>
-          <input type="hidden" name="id">
-          <input type="hidden" name="vagaId">
+          <input type="hidden" name="editId">
           <div class="row g-3">
             <div class="col-12">
-              <label class="form-label" for="input-cand-nome">Nome do Candidato <span class="text-danger">*</span></label>
-              <input type="text" id="input-cand-nome" name="nome" class="form-control" maxlength="80" required>
-              <div class="invalid-feedback">Informe o nome do candidato.</div>
+              <label class="form-label" for="cand-nome">Nome <span class="req">*</span></label>
+              <input type="text" class="form-control" id="cand-nome" name="nome" maxlength="150" required>
+              <div class="invalid-feedback">Informe o nome.</div>
             </div>
             <div class="col-md-6">
-              <label class="form-label" for="input-cand-email">E-mail</label>
-              <input type="email" id="input-cand-email" name="email" class="form-control">
+              <label class="form-label" for="cand-email">E-mail</label>
+              <input type="email" class="form-control" id="cand-email" name="email" maxlength="150">
             </div>
             <div class="col-md-6">
-              <label class="form-label" for="input-cand-telefone">Telefone</label>
-              <input type="tel" id="input-cand-telefone" name="telefone" class="form-control" placeholder="(00) 00000-0000" maxlength="15">
+              <label class="form-label" for="cand-tel">Telefone</label>
+              <input type="tel" class="form-control" id="cand-tel" name="telefone">
             </div>
             <div class="col-md-6">
-              <label class="form-label" for="input-cand-origem">Origem</label>
-              <select id="input-cand-origem" name="origem" class="form-select">
-                <option>LinkedIn</option>
-                <option>Indicação</option>
-                <option>Site da Empresa</option>
-                <option>Outros</option>
+              <label class="form-label" for="cand-origem">Origem</label>
+              <select class="form-select" id="cand-origem" name="origem">
+                <option value="LinkedIn">LinkedIn</option>
+                <option value="Indicação">Indicação</option>
+                <option value="Site">Site</option>
+                <option value="Outros">Outros</option>
               </select>
             </div>
             <div class="col-md-6">
-              <label class="form-label" for="input-cand-etapa">Etapa</label>
-              <select id="input-cand-etapa" name="etapa" class="form-select"></select>
+              <label class="form-label" for="cand-etapa">Etapa</label>
+              <select class="form-select" id="cand-etapa" name="etapa"></select>
             </div>
             <div class="col-12">
-              <label class="form-label" for="input-cand-avaliacao">Avaliação</label>
+              <label class="form-label d-block">Avaliação</label>
               <div class="star-input" id="star-input">
-                <i class="bi bi-star" data-star="1"></i>
-                <i class="bi bi-star" data-star="2"></i>
-                <i class="bi bi-star" data-star="3"></i>
-                <i class="bi bi-star" data-star="4"></i>
-                <i class="bi bi-star" data-star="5"></i>
+                <i class="bi bi-star-fill" data-star="1"></i><i class="bi bi-star-fill" data-star="2"></i><i class="bi bi-star-fill" data-star="3"></i><i class="bi bi-star-fill" data-star="4"></i><i class="bi bi-star-fill" data-star="5"></i>
               </div>
-              <input type="hidden" id="input-cand-avaliacao" name="avaliacao" value="0">
             </div>
             <div class="col-12">
-              <label class="form-label" for="input-cand-observacoes">Observações</label>
-              <textarea id="input-cand-observacoes" name="observacoes" class="form-control" rows="2" maxlength="300"></textarea>
+              <label class="form-label" for="cand-obs">Observações</label>
+              <textarea class="form-control" id="cand-obs" name="observacoes" rows="3" maxlength="500"></textarea>
             </div>
           </div>
         </div>
-        <div class="modal-footer d-flex justify-content-between">
-          <button type="button" class="btn btn-ghost text-danger d-none" id="btn-remover-candidato">
-            <i class="bi bi-trash"></i> Remover
-          </button>
-          <div class="ms-auto d-flex gap-2">
-            <button type="button" class="btn btn-ghost" data-bs-dismiss="modal">Cancelar</button>
-            <button type="submit" class="btn btn-primary" id="btn-salvar-candidato">Salvar</button>
-          </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger-soft me-auto d-none" id="btn-excluir-cand"><i class="bi bi-trash3"></i> Remover</button>
+          <button type="button" class="btn btn-soft" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="btn-salvar-cand"><i class="bi bi-check2"></i> Salvar</button>
         </div>
       </form>
-    </div>
-  </div>
-
-  <!-- MODAL DE CONFIRMAÇÃO (excluir vaga ou candidato) -->
-  <div class="modal fade" id="modal-delete" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-body p-4">
-          <h5 class="mb-2" id="modal-delete-title">Remover</h5>
-          <p class="text-muted mb-0" id="modal-delete-text">Essa ação não pode ser desfeita.</p>
-        </div>
-        <div class="modal-footer border-0 pt-0 px-4 pb-4">
-          <button type="button" class="btn btn-ghost" data-bs-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn btn-outline-danger" id="btn-confirm-delete">Remover</button>
-        </div>
-      </div>
     </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="../components/navbar.js"></script>
+  <script src="../assets/js/api.js"></script>
   <script src="../assets/js/utils.js"></script>
+  <script src="../components/layout.js"></script>
   <script src="../assets/js/recrutamento.js"></script>
 </body>
 </html>

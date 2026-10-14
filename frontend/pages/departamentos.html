@@ -1,112 +1,80 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Departamentos - Sistema RH</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Departamentos · Sistema RH</title>
+  <script>try{document.documentElement.setAttribute('data-bs-theme',localStorage.getItem('rh-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))}catch(e){}</script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../assets/css/navbar.css">
-  <link rel="stylesheet" href="../assets/css/departamentos.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/app.css">
 </head>
-<body>
-  <div id="site-navbar"></div>
-
-  <main class="container-fluid my-4">
-    <div class="page-header d-flex justify-content-between align-items-end flex-wrap gap-3 mb-4">
+<body data-title="Departamentos">
+  <main class="app-content">
+    <div class="page-header">
       <div>
-        <span class="page-eyebrow">Recursos Humanos</span>
-        <h1 class="page-title mb-1">Departamentos</h1>
-        <p class="text-muted mb-0" id="results-summary">Carregando...</p>
+        <span class="page-eyebrow">Estrutura</span>
+        <h1 class="page-title">Departamentos</h1>
+        <p class="page-subtitle" id="summary">Carregando...</p>
       </div>
-      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#departamentoModal" id="btn-novo">
-        <span class="btn-icon">+</span> Novo Departamento
-      </button>
+      <button class="btn btn-primary" id="btn-novo"><i class="bi bi-plus-lg"></i> Novo departamento</button>
     </div>
 
-    <div id="loading" class="loading-state text-center my-5">
-      <div class="spinner-border" role="status"></div>
-      <p class="text-muted mt-3 mb-0">Carregando departamentos...</p>
-    </div>
-
-    <div id="departamentos-container" class="row g-4"></div>
-
-    <div id="empty-state" class="empty-state" hidden>
-      <div class="empty-icon">🏢</div>
-      <strong>Nenhum departamento cadastrado</strong>
-      <span class="text-muted d-block mb-3">Comece criando o primeiro departamento da empresa.</span>
-      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#departamentoModal">
-        <span class="btn-icon">+</span> Novo Departamento
-      </button>
-    </div>
-
-    <div id="alerta" class="alert-box" hidden>
-      <div class="d-flex align-items-start gap-3">
-        <span class="alert-icon">⚠️</span>
-        <div class="flex-grow-1">
-          <strong>Não foi possível carregar os departamentos</strong>
-          <p id="alerta-msg" class="text-muted mb-0"></p>
+    <div class="panel mb-4">
+      <form class="toolbar border-0" id="filters" autocomplete="off">
+        <div class="input-icon search">
+          <i class="bi bi-search"></i>
+          <input type="search" class="form-control" id="f-busca" placeholder="Buscar departamento">
         </div>
-        <button type="button" class="btn btn-sm btn-outline-secondary" id="btn-retry">Tentar novamente</button>
-      </div>
+        <select class="form-select" id="f-status" aria-label="Status">
+          <option value="">Todos os status</option>
+          <option value="ativo">Ativos</option>
+          <option value="inativo">Inativos</option>
+        </select>
+      </form>
     </div>
+
+    <div class="row g-4" id="grid"></div>
+    <div id="estado"></div>
   </main>
 
-  <!-- MODAL DE CRIAÇÃO / EDIÇÃO -->
-  <div class="modal fade" id="departamentoModal" tabindex="-1">
+  <div class="modal fade" id="modal-dep" tabindex="-1" aria-labelledby="modal-dep-title">
     <div class="modal-dialog modal-dialog-centered">
-      <form id="form-departamento" class="modal-content" novalidate>
+      <form class="modal-content" id="form-dep" novalidate>
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="modal-title">Novo Departamento</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          <h2 class="modal-title" id="modal-dep-title">Novo departamento</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
         </div>
         <div class="modal-body">
-          <div id="form-erro" class="form-erro" hidden></div>
-          <input type="hidden" name="id">
+          <input type="hidden" name="editId">
           <div class="mb-3">
-            <label class="form-label" for="input-nome">Nome <span class="text-danger">*</span></label>
-            <input type="text" id="input-nome" name="nome" class="form-control" maxlength="80" required autofocus>
+            <label class="form-label" for="dep-nome">Nome <span class="req">*</span></label>
+            <input type="text" class="form-control" id="dep-nome" name="nome" maxlength="100" required>
             <div class="invalid-feedback">Informe o nome do departamento.</div>
           </div>
-          <div class="mb-1">
-            <label class="form-label" for="input-descricao">Descrição</label>
-            <textarea id="input-descricao" name="descricao" class="form-control" rows="3" maxlength="240"></textarea>
-            <div class="form-text text-end" id="char-count">0/240</div>
+          <div class="mb-3">
+            <label class="form-label" for="dep-descricao">Descrição</label>
+            <textarea class="form-control" id="dep-descricao" name="descricao" rows="3" maxlength="255"></textarea>
+            <div class="form-text text-end"><span id="dep-count">0</span>/255</div>
+          </div>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="dep-ativo" name="ativo" checked>
+            <label class="form-check-label" for="dep-ativo">Departamento ativo</label>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-ghost" data-bs-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn-primary" id="btn-salvar">Salvar</button>
+          <button type="button" class="btn btn-soft" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="btn-salvar"><i class="bi bi-check2"></i> Salvar</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- MODAL DE CONFIRMAÇÃO DE EXCLUSÃO -->
-  <div class="modal fade" id="modal-delete" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-body p-4">
-          <h5 class="mb-2">Excluir departamento</h5>
-          <p class="text-muted mb-0">
-            Tem certeza que deseja excluir <strong id="modal-delete-name">este departamento</strong>?
-            Essa ação não pode ser desfeita.
-          </p>
-        </div>
-        <div class="modal-footer border-0 pt-0 px-4 pb-4">
-          <button type="button" class="btn btn-ghost" data-bs-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn btn-outline-danger" id="btn-confirm-delete">Excluir</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="../components/navbar.js"></script>
-  <script src="../assets/js/utils.js"></script>
   <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script src="../components/layout.js"></script>
   <script src="../assets/js/departamentos.js"></script>
 </body>
 </html>

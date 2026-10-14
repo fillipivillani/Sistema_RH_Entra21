@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Funcionário · Sistema RH</title>
+  <script>try{document.documentElement.setAttribute('data-bs-theme',localStorage.getItem('rh-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))}catch(e){}</script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/app.css">
+</head>
+<body data-title="Funcionário">
+  <main class="app-content">
+    <div class="page-header">
+      <div>
+        <a href="funcionarios.html" class="small d-inline-flex align-items-center gap-1 mb-2"><i class="bi bi-arrow-left"></i> Voltar para funcionários</a>
+        <h1 class="page-title" id="titulo">Novo funcionário</h1>
+        <p class="page-subtitle" id="subtitulo">Preencha os dados para cadastrar uma nova pessoa no time.</p>
+      </div>
+    </div>
+
+    <div id="estado"></div>
+
+    <form id="form-funcionario" class="row g-4" novalidate autocomplete="off" hidden>
+      <div class="col-lg-4 order-lg-2">
+        <div class="panel sticky-side">
+          <div class="profile-card">
+            <div id="preview-avatar"></div>
+            <h3 id="preview-nome">Novo funcionário</h3>
+            <p class="text-muted small mb-3" id="preview-cargo">Cargo · Departamento</p>
+            <div class="text-start">
+              <label class="form-label" for="foto">URL da foto</label>
+              <div class="input-icon">
+                <i class="bi bi-image"></i>
+                <input type="url" class="form-control" id="foto" name="foto" maxlength="255" placeholder="https://...">
+              </div>
+              <div class="form-text">Opcional. Sem foto, exibimos as iniciais.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-8 order-lg-1">
+        <div class="panel">
+          <section class="form-section">
+            <h2 class="form-section-title"><i class="bi bi-person-vcard"></i> Dados pessoais</h2>
+            <p class="form-section-desc">Informações de identificação do funcionário.</p>
+            <div class="row g-3">
+              <div class="col-12">
+                <label class="form-label" for="nome">Nome completo <span class="req">*</span></label>
+                <input type="text" class="form-control" id="nome" name="nome" maxlength="150" required>
+                <div class="invalid-feedback">Informe o nome completo.</div>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label" for="cpf">CPF <span class="req">*</span></label>
+                <input type="text" class="form-control" id="cpf" name="cpf" inputmode="numeric" placeholder="000.000.000-00" required>
+                <div class="invalid-feedback">CPF inválido.</div>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label" for="rg">RG</label>
+                <input type="text" class="form-control" id="rg" name="rg" maxlength="20">
+              </div>
+              <div class="col-md-4">
+                <label class="form-label" for="dataNascimento">Data de nascimento <span class="req">*</span></label>
+                <input type="date" class="form-control" id="dataNascimento" name="dataNascimento" required>
+                <div class="invalid-feedback">Informe a data de nascimento.</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="form-section">
+            <h2 class="form-section-title"><i class="bi bi-geo-alt"></i> Contato e endereço</h2>
+            <p class="form-section-desc">Use o CEP para preencher o endereço automaticamente.</p>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label" for="email">E-mail <span class="req">*</span></label>
+                <div class="input-icon"><i class="bi bi-envelope"></i>
+                  <input type="email" class="form-control" id="email" name="email" maxlength="150" required>
+                  <div class="invalid-feedback">Informe um e-mail válido.</div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="telefone">Telefone</label>
+                <div class="input-icon"><i class="bi bi-telephone"></i>
+                  <input type="tel" class="form-control" id="telefone" name="telefone" placeholder="(00) 00000-0000">
+                  <div class="invalid-feedback">Telefone inválido.</div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label" for="cep">CEP</label>
+                <div class="input-group">
+                  <input type="text" class="form-control" id="cep" inputmode="numeric" placeholder="00000-000">
+                  <button class="btn btn-soft" type="button" id="btn-cep" title="Buscar CEP"><i class="bi bi-search"></i></button>
+                </div>
+                <div class="form-text" id="cep-status"></div>
+              </div>
+              <div class="col-md-8">
+                <label class="form-label" for="endereco">Endereço</label>
+                <input type="text" class="form-control" id="endereco" name="endereco" maxlength="255" placeholder="Rua, número, bairro, cidade/UF">
+              </div>
+            </div>
+          </section>
+
+          <section class="form-section">
+            <h2 class="form-section-title"><i class="bi bi-briefcase"></i> Contrato</h2>
+            <p class="form-section-desc">Lotação, cargo e remuneração.</p>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label" for="departamentoId">Departamento <span class="req">*</span></label>
+                <select class="form-select" id="departamentoId" name="departamentoId" required></select>
+                <div class="invalid-feedback">Selecione um departamento.</div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="cargoId">Cargo <span class="req">*</span></label>
+                <select class="form-select" id="cargoId" name="cargoId" required></select>
+                <div class="invalid-feedback">Selecione um cargo.</div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="dataAdmissao">Data de admissão <span class="req">*</span></label>
+                <input type="date" class="form-control" id="dataAdmissao" name="dataAdmissao" required>
+                <div class="invalid-feedback">Informe a data de admissão.</div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="salario">Salário <span class="req">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text">R$</span>
+                  <input type="number" class="form-control" id="salario" name="salario" min="0" step="0.01" required>
+                  <div class="invalid-feedback">Informe um salário válido.</div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <div class="form-actions">
+            <a href="funcionarios.html" class="btn btn-ghost">Cancelar</a>
+            <button type="submit" class="btn btn-primary" id="btn-salvar"><i class="bi bi-check2"></i> Salvar funcionário</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script src="../components/layout.js"></script>
+  <script src="../assets/js/funcionario-form.js"></script>
+</body>
+</html>
